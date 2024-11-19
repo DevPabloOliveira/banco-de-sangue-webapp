@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Sangue - Bem vindo</title>
+    <link rel="icon" href="/img/icon.png">
+    <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body>
+    <nav>
+        <a href="#">LOGO</a>
+        <a href="#">entrar</a>
+        <a href="#">cadastrar</a>
+    </nav>
+
+    <div id="slogan">
+        <h1>Bem vindo ao Banco de Sangue, administre sua empresa, funcionários e insumos!</h1>
+        <button>Começe agora mesmo!</button>
+    </div>
+
+    <div id="modal-entrar" class="modal">
+        <form action="/entrar" method="POST">
+            <h4>Entrar na sua conta</h4>
+            <input type="email" name="email" placeholder="E-mail de autenticação*" required>
+            <input type="password" name="password" placeholder="Entre com sua senha*" required>
+            <a href="/recuperacao" class="esqueceu-senha" target="_blank">esqueceu sua senha?</a>
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <div id="modal-cadastro" class="modal">
+        <form action="/cadastrar" method="POST">
+            <h4>Cadastrar empresa</h4>
+            <input type="text" name="name" placeholder="Seu nome completo*" required>
+            <input type="text" name="name-empresa" placeholder="Nome da sua empresa*" required>
+            <input type="text" name="cnpj" placeholder="CNPJ da sua empresa*" required>
+            <input type="text" name="endereco" placeholder="Endereço da empresa*" required>
+            <input type="email" name="email" placeholder="E-mail de autenticação*" required>
+            <input type="password" id="password" name="password" placeholder="Crie sua senha*" required>
+            <input type="password" id="confirm-password" placeholder="Confirme sua senha*" required>
+            <p id="message" style="color: red; display: none;">As senhas não correspondem.</p>
+            <button type="submit">Cadastrar</button>
+        </form>
+    </div>
+
+    <footer>
+        <dl>
+            <dt>Suporte</dt>
+            <a href="/recuperacao" target="_blank">Recuperar acesso</a><br>
+            <a href="bancoXsangue@Xmail.com">bancoXsangue@Xmail.com</a>
+        </dl>
+        <dl>
+            <dt>Quem somos?</dt>
+            <a>Sobre nós</a><br>
+            <a href="https://www.google.com/maps?q=-3.143079836473052,-58.43169426859795" target="_blank">Nosso endereço</a>
+             
+        </dl>
+        <dl>
+            <dt>Nossas redes</dt>
+            <a href="/redes" target="_blank">Links</a>
+        </dl>
+        <dl>
+            <img id="logo" src="/img/icet.png" alt="icet">
+        </dl>
+        <dl>
+            <img id="logo" src="/img/ufam.png" alt="ufam">
+        </dl>
+    </footer>
+    <footer id="copy">
+        <p id="copyright">&copy; 2024 Banco de Sangue | <a id="copyright-a">ENGENHARIA DE SOFTWARE II</a></p>
+    </footer>
+</body>
+</html>

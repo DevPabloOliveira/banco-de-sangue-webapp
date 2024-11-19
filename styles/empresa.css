@@ -1,0 +1,12 @@
+main{
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+section{
+    margin-bottom: 1.5em;
+    padding: 1em;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}

@@ -1,0 +1,25 @@
+footer{
+    background-color: #ebdddd;
+    color: #ffffff;
+    padding: 40px;
+    display: table;
+    width: 100%;
+}
+footer dl, footer p{
+    display: table-cell;/*DIVIDE EM CELULAS*/
+    vertical-align: middle;
+}
+footer dt{
+    font-weight: bold;
+}
+footer a{
+    cursor: pointer;
+    text-decoration: none;
+    color: #232121;
+}
+footer a:hover {
+    color: #3a3636;
+}
+footer img{
+    height: 150px;
+}
