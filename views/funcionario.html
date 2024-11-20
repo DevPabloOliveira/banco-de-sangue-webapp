@@ -9,25 +9,117 @@
 </head>
 <body>
     <nav>
-        <a href="#">LOGO</a>
+        <a href="/views/index.html">LOGO</a>
         <a href="#">encessar sessão</a>
     </nav>
+        
+    <div id="add-doacao" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <form id="modal-add-doacao" action="/add-doacao" method="POST">
+            <h4>Registrar uma doação</h4>
+            <input type="text" name="name" placeholder="Nome do doador*" required>
+            <select name="documento" id="documento" required>
+                    <option>Documento c/ foto apresentado*</option>
+                    <option value="rg">RG</option>
+                    <option value="cnh">CNH</option>
+                    <option value="carteira-trabalho">Carteira de trabalho</option>
+                    <option value="carteira-conselho-prof">Carteira do Conselho Profissional</option>
+            </select>
+            <select name="tipo-sangue" id="tipo-sangue" required>
+                <option>Tipo sanguíneo*</option>
+                <option value="a+">A+</option>
+                <option value="b+">B+</option>
+                <option value="ab+">AB+</option>
+                <option value="o+">O+</option>
+                <option value="a-">A-</option>
+                <option value="b-">B-</option>
+                <option value="ab-">AB-</option>
+                <option value="o-">O-</option>
+            </select>
+            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
+            <input type="email" name="email" placeholder="E-mail de doador">
+            <input type="text" name="complemento" placeholder="Complemento">
+
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="condicao1" required>
+                    <label for="condicao1">O doador tem entre 16 e 69 anos</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="condicao2" required>
+                    <label for="condicao2">O doador tem mais de 50kg</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="condicao3" required>
+                    <label for="condicao3">Não tomou vacina contra gripe há 48 horas</label>
+                </div>
+            </div>
+
+            <button type="submit">Encaminhar doação</button>
+        </form>
+    </div>
+
+    <div id="buscar-doador" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <h4>Busca de doador/doação</h4>
+        <input type="search" name="busca" id="buscar-doador" placeholder="Buscar pelo nome do doador">
+        
+        <a id="aviso" style="color: red">Nenhum doador encontrado.</a> <!-- display none -->
+
+    </div>
+
+    <div id="buscar-bolsa-sangue" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <h4>Busca de bolsa de sangue</h4>
+        <select name="tipo-sangue" id="tipo-sangue" required>
+            <option>Buscar pelo tipo de sangue</option>
+            <option value="a+">A+</option>
+            <option value="b+">B+</option>
+            <option value="ab+">AB+</option>
+            <option value="o+">O+</option>
+            <option value="a-">A-</option>
+            <option value="b-">B-</option>
+            <option value="ab-">AB-</option>
+            <option value="o-">O-</option>
+        </select>
+        <a id="aviso" style="color: red">Nenhuma bolsa de sangue encontrada.</a>
+    </div>
+
+    <div id="add-insumos" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <h4>Adicionar insumo</h4>
+        <form>
+            <input type="text" name="name" placeholder="Insumo* ex: seringas" required>
+            <input type="number" name="quantidade" placeholder="Quantidade* ex: 20" required>
+
+            <button type="submit">Encaminhar doação</button>
+        </form>
+    </div>
+
+    <div id="buscar-insumos" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <h4>Busca de insumos</h4>
+        <input type="search" name="busca" id="buscar-insumos" placeholder="Buscar pelo nome do insumo">
+        
+        <a id="aviso" style="color: red">Nenhum insumo encontrado.</a>
+    </div>
 
     <main>
         <section id="administracao">
-            <p>Bem-vindo, colaborador!</p>
+            <h2>Bem-vindo, colaborador!</h2>
         </section>
 
         <section id="doador">
-            <h2>Doação</h2>
-            <button>Registrar doador</button>
-            <button>Buscar doador</button>
+            <h2>Doações</h2>
+            <a href="#add-doacao" class="botao">Registrar doador</a>
+            <a href="#buscar-doador" class="botao">Buscar doador</a>
         </section>
 
         <section id="estoque">
             <h2>Estoque</h2>
-            <button>Adicionar insumo</button>
-            <button>Buscar insumos</button>
+            <a href="#buscar-bolsa-sangue" class="botao">Buscar bolsa de sangue</a>
+            <a href="#add-insumos" class="botao">Adicionar insumo</a>
+            <a href="#buscar-insumos" class="botao">Buscar insumos</a>
         </section>
     </main>
 </body>

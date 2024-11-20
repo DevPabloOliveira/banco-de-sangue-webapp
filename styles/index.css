@@ -1,7 +1,92 @@
+body{
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    overflow-x: hidden;
+    background-image: url('/img/fundo.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+nav{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #e31a1a;
+    padding: 30px;
+    color: white;
+}
+nav a{
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+nav a:hover{
+    text-decoration: underline;
+}
+.modal{
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    background: white;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    z-index: 1000;
+    padding: 20px;
+    text-align: center;
+}
+.modal:target{
+    display: block; 
+}
+.fechar{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    text-decoration: none;
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+.fechar:hover{
+    color: red;
+}
+form{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+form input, form select, form button{
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+form button{
+    background-color: #e31a1a;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+form button:hover{
+    background-color: #bd1818;
+}
+#slogan{
+    margin-bottom: 400px;
+}
+/*------------------------------------------*/
 footer{
-    background-color: #ebdddd;
+    background-color: #bd1818;
     color: #ffffff;
-    padding: 40px;
+    padding: 20px;
     display: table;
     width: 100%;
 }
@@ -15,11 +100,11 @@ footer dt{
 footer a{
     cursor: pointer;
     text-decoration: none;
-    color: #232121;
+    color: #dcdada;
 }
 footer a:hover {
-    color: #3a3636;
+    color: #b2afaf;
 }
 footer img{
-    height: 150px;
+    height: 100px;
 }

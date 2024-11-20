@@ -10,16 +10,17 @@
 <body>
     <nav>
         <a href="#">LOGO</a>
-        <a href="#">entrar</a>
-        <a href="#">cadastrar</a>
+        <a href="/views/empresa.html">tela adm (navegação provisória)</a>
+        <a href="#modal-entrar">entrar</a>
+        <a href="#modal-cadastro">cadastrar</a>
     </nav>
 
     <div id="slogan">
         <h1>Bem vindo ao Banco de Sangue, administre sua empresa, funcionários e insumos!</h1>
-        <button>Começe agora mesmo!</button>
     </div>
 
     <div id="modal-entrar" class="modal">
+        <a href="#" class="fechar">&times;</a>
         <form action="/entrar" method="POST">
             <h4>Entrar na sua conta</h4>
             <input type="email" name="email" placeholder="E-mail de autenticação*" required>
@@ -30,6 +31,7 @@
     </div>
 
     <div id="modal-cadastro" class="modal">
+        <a href="#" class="fechar">&times;</a>
         <form action="/cadastrar" method="POST">
             <h4>Cadastrar empresa</h4>
             <input type="text" name="name" placeholder="Seu nome completo*" required>
