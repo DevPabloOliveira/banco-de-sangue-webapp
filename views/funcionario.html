@@ -9,8 +9,15 @@
 </head>
 <body>
     <nav>
-        <a href="/views/index.html">LOGO</a>
-        <a href="#">encessar sessão</a>
+        <a href="/views/index.html" class="logo">
+            <img src="/img/icon.png" alt="Logo" style="width: 70px; height: auto;">
+        </a>
+        <div class="divider"></div>
+        <a href="/views/index.html" class="logout">
+            <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width: 40px; height: auto;">
+            <br>
+            <label class="legenda">Deslogar</label>
+        </a>
     </nav>
         
     <div id="add-doacao" class="modal">
@@ -105,21 +112,42 @@
     </div>
 
     <main>
-        <section id="administracao">
-            <h2>Bem-vindo, colaborador!</h2>
-        </section>
-
         <section id="doador">
-            <h2>Doações</h2>
-            <a href="#add-doacao" class="botao">Registrar doador</a>
-            <a href="#buscar-doador" class="botao">Buscar doador</a>
+            <h2>
+                <img src="../img/icons/doador.png"/>
+                Doações
+            </h2>
+            <div class="botao-container">
+                <a href="#add-doacao" class="botao">
+                    <img src="../img/icons/observacao.png"/>
+                    <span>Registrar Doador</span>
+                </a>
+                <a href="#buscar-doador" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Doador</span>
+                </a>
+            </div>
         </section>
 
         <section id="estoque">
-            <h2>Estoque</h2>
-            <a href="#buscar-bolsa-sangue" class="botao">Buscar bolsa de sangue</a>
-            <a href="#add-insumos" class="botao">Adicionar insumo</a>
-            <a href="#buscar-insumos" class="botao">Buscar insumos</a>
+            <h2>
+                <img src="../img/icons/estoque.png"/>
+                Estoque
+            </h2>
+            <div class="botao-container">
+                <a href="#buscar-bolsa-sangue" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Bolsa de Sangue</span>
+                </a>
+                <a href="#add-insumos" class="botao">
+                    <img src="../img/icons/adicionar.png"/>
+                    <span>Adicionar Insumo</span>
+                </a>
+                <a href="#buscar-insumos" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Insumos</span>
+                </a>
+            </div>
         </section>
     </main>
 </body>

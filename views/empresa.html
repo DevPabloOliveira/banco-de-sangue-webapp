@@ -9,12 +9,24 @@
 </head>
 <body>
     <nav>
-        <a href="/views/index.html">LOGO</a>
-        <a href="/views/index.html">encessar sessão</a>
-        <a href="/views/funcionario.html">funcionário (navegação provisória)</a>
+        <a href="/views/index.html" class="logo">
+            <img src="/img/icon.png" alt="Logo" style="width: 70px; height: auto;">
+        </a>
+        <div class="divider"></div>
+        <!-- <a href="/views/funcionario.html">
+            <img src="/img/icons/funcionarios.png" alt="Funcionário" style="width: 35px; height: auto;">
+            <br>
+            <label class="legenda">Funcionários</label>
+        </a> -->
+        <a href="/views/index.html" class="logout">
+            <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width: 40px; height: auto;">
+            <br>
+            <label class="legenda">Deslogar</label>
+        </a>
     </nav>
 
     <div id="modal-deletar" class="modal">
+        <img src="/img/icons/lixeira.png">
         <a href="#" class="fechar">&times;</a>
         <form action="/deletar" method="POST">
             <h4>Deletar empresa?</h4>
@@ -152,33 +164,76 @@
     </div>
 
     <main>
-        <section id="administracao">
-            <h2>Bem-vindo ao painel de controle, adm! Administre sua empresa por aqui!</h2>
-        </section>
-
         <section id="empresa">
-            <h2>Empresa</h2>
-            <a href="#modal-deletar" class="botao">Excluir empresa</a>
-            <a href="#editar-empresa" class="botao">Editar empresa</a>
+            <h2>
+                <img src="../img/icons/empresa.png"/>
+                Empresa
+            </h2>
+            <div class="botao-container">
+                <a href="#modal-deletar" class="botao">
+                    <img src="../img/icons/lixeira.png"/>
+                    <span>Excluir Empresa</span>
+                </a>
+                <a href="#editar-empresa" class="botao">
+                    <img src="../img/icons/editar.png"/>
+                    <span>Editar Empresa</span>
+                </a>
+            </div>
         </section>
 
         <section id="funcionario">
-            <h2>Funcionários</h2>
-            <a href="#add-funcionario" class="botao">Adicionar funcionário</a>
-            <a href="#buscar-funcionario" class="botao">Buscar funcionários</a>
+            <h2>
+                <img src="../img/icons/funcionario.png"/>
+                Funcionários
+            </h2>
+            <div class="botao-container">
+                <a href="#add-funcionario" class="botao">
+                    <img src="../img/icons/adicionar-funcionario.png"/>
+                    <span>Adicionar Funcionário</span>
+                </a>
+                <a href="#buscar-funcionario" class="botao">
+                    <img src="../img/icons/buscar-funcionario.png"/>
+                    <span>Buscar Funcionários</span>
+                </a>
+            </div>
         </section>
 
         <section id="doador">
-            <h2>Doações</h2>
-            <a href="#add-doacao" class="botao">Registrar doador</a>
-            <a href="#buscar-doador" class="botao">Buscar doador</a>
+            <h2>
+                <img src="../img/icons/doador.png"/>
+                Doações
+            </h2>
+            <div class="botao-container">
+                <a href="#add-doacao" class="botao">
+                    <img src="../img/icons/observacao.png"/>
+                    <span>Registrar Doador</span>
+                </a>
+                <a href="#buscar-doador" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Doador</span>
+                </a>
+            </div>
         </section>
 
         <section id="estoque">
-            <h2>Estoque</h2>
-            <a href="#buscar-bolsa-sangue" class="botao">Buscar bolsa de sangue</a>
-            <a href="#add-insumos" class="botao">Adicionar insumo</a>
-            <a href="#buscar-insumos" class="botao">Buscar insumos</a>
+            <h2>
+                <img src="../img/icons/estoque.png"/>
+                Estoque
+            </h2>
+            <div class="botao-container">
+                <a href="#buscar-bolsa-sangue" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Bolsa de Sangue</span>
+                </a>
+                <a href="#add-insumos" class="botao">
+                    <img src="../img/icons/adicionar.png"/>
+                    <span>Adicionar Insumo</span>
+                </a>
+                <a href="#buscar-insumos" class="botao">
+                    <img src="../img/icons/procurar.png"/>
+                    <span>Buscar Insumos</span>
+                </a>
+            </div>
         </section>
     </main>
 </body>

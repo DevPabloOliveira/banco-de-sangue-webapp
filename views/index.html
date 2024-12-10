@@ -9,14 +9,70 @@
 </head>
 <body>
     <nav>
-        <a href="#">LOGO</a>
-        <a href="/views/empresa.html">tela adm (navegação provisória)</a>
-        <a href="#modal-entrar">entrar</a>
-        <a href="#modal-cadastro">cadastrar</a>
+        <a href="/views/index.html" class="logo">
+            <img src="/img/icon.png" alt="logo">
+        </a>
+        <!-- <a href="/views/empresa.html">tela adm (navegação provisória)</a> -->
+        <div class="menu">
+            <a href="#modal-entrar">
+                <img src="/img/icons/login.png" alt="entrar">
+                <br>
+                <label class="legenda">Entrar</label>
+            </a>
+            <!-- <a href="#modal-entrar">entrar</a> -->
+            <a href="#modal-cadastro">
+                <img src="/img/icons/registro.png" alt="cadastrar">
+                <br>
+                <label class="legenda">Cadastrar</label>
+            </a>
+            <!-- <a href="#modal-cadastro">cadastrar</a> -->
+        </div>
     </nav>
 
     <div id="slogan">
-        <h1>Bem vindo ao Banco de Sangue, administre sua empresa, funcionários e insumos!</h1>
+        <h1>Bem vindo ao Banco de Sangue!</h1>
+        <p>Administre sua empresa, funcionários e insumos com facilidade.</p>
+    </div>
+
+    <div id="informacoes-sistema">
+        <div class="informacao-container">
+            <div class="informacao-imagem">
+                <!-- <img src="/img/icons/informacao.png" alt="informações do sistema"> -->
+            </div>
+            <div class="informacao-texto">
+                <h2>Sobre o Sistema</h2>
+                <p>O Banco de Sangue é uma página da web que tem o objetivo de computar o registro de atividades de uma unidade de coleta de sangue, onde um administrador cria sua conta no site, pode cadastrar uma unidade de coleta e atualizar a unidade a todo momento ou excluir todos os registros dela.
+                    As demais atividades que o site acompanha é no cadastro de funcionários e acompanhamento destes por parte do administrador, além disso atividades podem ser designadas a um atendente do banco, que terá suas atividades atribuídas uma vez que cadastrado e autenticado como um atendente da unidade. As atividades dos atendentes são registrar no banco de dados da unidade os doadores que serão atendidos na unidade coletando informações importantes para os órgãos de saúde, como o tipo sanguíneo dos pacientes e guardando no banco de dados os tipos coletados.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div id="mais-informacoes">
+        <div class="informacao-container">
+            <div class="informacao-texto-informacoes">
+                <h2>Colaboradores</h2>
+                <!-- <p>Conheça os colaboradores responsáveis pelo desenvolvimento deste sistema:</p> -->
+            </div>
+            <div class="informacao-imagem">
+                <div class="colaborador">
+                    <img src="/img/colaboradores/Bruno.PNG" alt="Colaborador 1">
+                    <p>Bruno Augusto</p>
+                </div>
+                <div class="colaborador">
+                    <img src="/img/colaboradores/Chris.PNG" alt="Colaborador 2">
+                    <p>Chris Rodrigues</p>
+                </div>
+                <div class="colaborador">
+                    <img src="/img/colaboradores/Pablo.PNG" alt="Colaborador 3">
+                    <p>Pablo de Oliveira</p>
+                </div>
+                <div class="colaborador">
+                    <img src="/img/colaboradores/Wilian.PNG" alt="Colaborador 4">
+                    <p>Wilian Tavares</p>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="modal-entrar" class="modal">
