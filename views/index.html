@@ -12,20 +12,20 @@
         <a href="/views/index.html" class="logo">
             <img src="/img/icon.png" alt="logo">
         </a>
-        <!-- <a href="/views/empresa.html">tela adm (navegação provisória)</a> -->
         <div class="menu">
-            <a href="#modal-entrar">
-                <img src="/img/icons/login.png" alt="entrar">
-                <br>
+            <!-- Se quiser replicar a lógica de esconder/mostrar conforme autenticação, mantenha esses links -->
+            <a href="#modal-entrar" class="auth-only">
+                <img src="/img/icons/login.png" alt="entrar"><br>
                 <label class="legenda">Entrar</label>
             </a>
-            <!-- <a href="#modal-entrar">entrar</a> -->
-            <a href="#modal-cadastro">
-                <img src="/img/icons/registro.png" alt="cadastrar">
-                <br>
+            <a href="#modal-cadastro" class="auth-only">
+                <img src="/img/icons/registro.png" alt="cadastrar"><br>
                 <label class="legenda">Cadastrar</label>
             </a>
-            <!-- <a href="#modal-cadastro">cadastrar</a> -->
+            <a href="/logout" id="btn-logout" style="display: none;">
+                <img src="/img/icons/logout.png" alt="logout"><br>
+                <label class="legenda">Encerrar Sessão</label>
+            </a>
         </div>
     </nav>
 
@@ -37,7 +37,6 @@
     <div id="informacoes-sistema">
         <div class="informacao-container">
             <div class="informacao-imagem">
-                <!-- <img src="/img/icons/informacao.png" alt="informações do sistema"> -->
             </div>
             <div class="informacao-texto">
                 <h2>Sobre o Sistema</h2>
@@ -75,17 +74,19 @@
         </div>
     </div>
 
+    <!-- Modal Entrar -->
     <div id="modal-entrar" class="modal">
         <a href="#" class="fechar">&times;</a>
         <form action="/entrar" method="POST">
             <h4>Entrar na sua conta</h4>
-            <input type="email" name="email" placeholder="E-mail de autenticação*" required>
-            <input type="password" name="password" placeholder="Entre com sua senha*" required>
+            <input type="email" name="email" placeholder="E-mail*" required>
+            <input type="password" name="password" placeholder="Senha*" required>
             <a href="/recuperacao" class="esqueceu-senha" target="_blank">esqueceu sua senha?</a>
             <button type="submit">Entrar</button>
         </form>
     </div>
 
+    <!-- Modal Cadastro -->
     <div id="modal-cadastro" class="modal">
         <a href="#" class="fechar">&times;</a>
         <form action="/cadastrar" method="POST">
@@ -106,13 +107,12 @@
         <dl>
             <dt>Suporte</dt>
             <a href="/recuperacao" target="_blank">Recuperar acesso</a><br>
-            <a href="bancoXsangue@Xmail.com">bancoXsangue@Xmail.com</a>
+            <a href="mailto:bancoXsangue@Xmail.com">bancoXsangue@Xmail.com</a>
         </dl>
         <dl>
             <dt>Quem somos?</dt>
             <a>Sobre nós</a><br>
             <a href="https://www.google.com/maps?q=-3.143079836473052,-58.43169426859795" target="_blank">Nosso endereço</a>
-             
         </dl>
         <dl>
             <dt>Nossas redes</dt>
@@ -126,7 +126,13 @@
         </dl>
     </footer>
     <footer id="copy">
-        <p id="copyright">&copy; 2024 Banco de Sangue | <a id="copyright-a">ENGENHARIA DE SOFTWARE II</a></p>
+        <p id="copyright">&copy; 2024 Banco de Sangue |
+           <a id="copyright-a">ENGENHARIA DE SOFTWARE II</a>
+        </p>
     </footer>
+
+    <!-- Scripts externos -->
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/validation.js"></script>
 </body>
 </html>
