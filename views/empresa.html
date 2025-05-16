@@ -13,12 +13,8 @@
             <img src="/img/icon.png" alt="Logo" style="width: 70px; height: auto;">
         </a>
         <div class="divider"></div>
-        <!-- <a href="/views/funcionario.html">
-            <img src="/img/icons/funcionarios.png" alt="Funcionário" style="width: 35px; height: auto;">
-            <br>
-            <label class="legenda">Funcionários</label>
-        </a> -->
-        <a href="/views/index.html" class="logout">
+        <!-- Criar um botão de logout com id para o script funcionar -->
+        <a href="#" id="btn-logout" class="logout">
             <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width: 40px; height: auto;">
             <br>
             <label class="legenda">Deslogar</label>
@@ -40,36 +36,45 @@
     <div id="editar-empresa" class="modal">
         <h4>Editar empresa</h4>
         <a href="#" class="fechar">&times;</a>
-        <button>Salvar alterações</button>
+        <!-- Necessário criar o form para editar empresa, como no código antigo -->
+        <form action="/editar-empresa" method="POST">
+            <input type="text" name="nameEmpresa" placeholder="Novo nome da empresa" required>
+            <input type="text" name="endereco" placeholder="Novo endereço da empresa" required>
+            <button type="submit">Salvar alterações</button>
+        </form>
     </div>
 
     <div id="add-funcionario" class="modal">
         <a href="#" class="fechar">&times;</a>
-            <form id="modal-add-funcionario" action="/add-fun" method="POST">
-                <h4>Adicionar um funcionário</h4>
-                <input type="text" name="name" placeholder="Nome do funcionário*" required>
-                <select name="cargo" id="cargo">
-                        <option>Cargo do funcionário</option>
-                        <option value="limpeza">Limpeza</option>
-                        <option value="balconista">Balconista</option>
-                        <option value="estoque">Estoque</option>
-                        <option value="outro">Outro</option>
-                    </select>
-                <input type="text" name="cpf" placeholder="CPF do funcionário*" required>
-                <input type="tet" name="pis" placeholder="Carterira de Trab. do funcionário">
-                <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
-                <input type="email" name="email" placeholder="E-mail de funcionário">
-                <input type="text" name="complemento" placeholder="Complemento">
-                <button type="submit">Cadastrar funcionário</button>
-            </form>
+        <form id="modal-add-funcionario" action="/add-fun" method="POST">
+            <h4>Adicionar um funcionário</h4>
+            <input type="text" name="name" placeholder="Nome do funcionário*" required>
+            <select name="cargo" id="cargo" required>
+                <option value="">Cargo do funcionário*</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="balconista">Balconista</option>
+                <option value="estoque">Estoque</option>
+                <option value="outro">Outro</option>
+            </select>
+            <input type="text" name="cpf" placeholder="CPF do funcionário*" required>
+            <input type="text" name="pis" placeholder="PIS do funcionário">
+            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
+            <input type="email" name="email" placeholder="E-mail do funcionário" required>
+            <input type="password" name="password" placeholder="Senha do funcionário*" required>
+            <input type="text" name="complemento" placeholder="Complemento">
+            <button type="submit">Cadastrar funcionário</button>
+        </form>
     </div>
 
     <div id="buscar-funcionario" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de funcionários</h4>
-        <input type="search" name="busca" id="buscar-funcionario" placeholder="Buscar pelo nome do funcionário">
-        <a id="aviso" style="color: red">Nenhum funcionário encontrado.</a> <!-- display none -->
-
+        <!-- Criar o form para buscar funcionario -->
+        <form id="form-busca-funcionario" action="/buscar-funcionario" method="GET">
+            <input type="text" name="query" placeholder="Nome ou cargo do funcionário" required>
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-busca-funcionario"></div>
     </div>
 
     <div id="add-doacao" class="modal">
@@ -78,13 +83,13 @@
             <h4>Registrar uma doação</h4>
             <input type="text" name="name" placeholder="Nome do doador*" required>
             <select name="documento" id="documento" required>
-                    <option>Documento c/ foto apresentado*</option>
-                    <option value="rg">RG</option>
-                    <option value="cnh">CNH</option>
-                    <option value="carteira-trabalho">Carteira de trabalho</option>
-                    <option value="carteira-conselho-prof">Carteira do Conselho Profissional</option>
+                <option>Documento c/ foto apresentado*</option>
+                <option value="rg">RG</option>
+                <option value="cnh">CNH</option>
+                <option value="carteira-trabalho">Carteira de trabalho</option>
+                <option value="carteira-conselho-prof">Carteira do Conselho Profissional</option>
             </select>
-            <select name="tipo-sangue" id="tipo-sangue" required>
+            <select name="tipo_sangue" id="tipo-sangue" required>
                 <option>Tipo sanguíneo*</option>
                 <option value="a+">A+</option>
                 <option value="b+">B+</option>
@@ -101,15 +106,15 @@
 
             <div class="checkbox-group">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao1" required>
+                    <input type="checkbox" id="condicao1" name="condicao_1" required>
                     <label for="condicao1">O doador tem entre 16 e 69 anos</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao2" required>
+                    <input type="checkbox" id="condicao2" name="condicao_2" required>
                     <label for="condicao2">O doador tem mais de 50kg</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao3" required>
+                    <input type="checkbox" id="condicao3" name="condicao_3" required>
                     <label for="condicao3">Não tomou vacina contra gripe há 48 horas</label>
                 </div>
             </div>
@@ -121,46 +126,57 @@
     <div id="buscar-doador" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de doador/doação</h4>
-        <input type="search" name="busca" id="buscar-doador" placeholder="Buscar pelo nome do doador">
-        
-        <a id="aviso" style="color: red">Nenhum doador encontrado.</a> <!-- display none -->
-
+        <form id="form-busca-doador" action="/buscar-doador" method="GET">
+            <input type="text" name="query" placeholder="Nome ou tipo sanguíneo" required>
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-busca-doador"></div>
     </div>
 
     <div id="buscar-bolsa-sangue" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de bolsa de sangue</h4>
-        <select name="tipo-sangue" id="tipo-sangue" required>
-            <option>Buscar pelo tipo de sangue</option>
-            <option value="a+">A+</option>
-            <option value="b+">B+</option>
-            <option value="ab+">AB+</option>
-            <option value="o+">O+</option>
-            <option value="a-">A-</option>
-            <option value="b-">B-</option>
-            <option value="ab-">AB-</option>
-            <option value="o-">O-</option>
-        </select>
-        <a id="aviso" style="color: red">Nenhuma bolsa de sangue encontrada.</a>
+        <form id="form-busca-bolsa" action="/buscar-bolsa-sangue" method="GET">
+            <select name="tipo_sangue" required>
+                <option value="">Buscar pelo tipo de sangue</option>
+                <option value="a+">A+</option>
+                <option value="b+">B+</option>
+                <option value="ab+">AB+</option>
+                <option value="o+">O+</option>
+                <option value="a-">A-</option>
+                <option value="b-">B-</option>
+                <option value="ab-">AB-</option>
+                <option value="o-">O-</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-bolsa"></div>
     </div>
 
     <div id="add-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Adicionar insumo</h4>
-        <form>
-            <input type="text" name="name" placeholder="Insumo* ex: seringas" required>
+        <form id="form-add-insumo">
+            <input type="text" name="nome" placeholder="Insumo* ex: seringas" required>
             <input type="number" name="quantidade" placeholder="Quantidade* ex: 20" required>
-
-            <button type="submit">Encaminhar doação</button>
+            <button type="submit">Adicionar Insumo</button>
         </form>
+        <div id="mensagem-sucesso" style="display: none; color: green; margin-top: 10px;">
+            Insumo adicionado com sucesso!
+        </div>
+        <div id="mensagem-erro" style="display: none; color: red; margin-top: 10px;">
+            Ocorreu um erro ao adicionar o insumo.
+        </div>
     </div>
 
     <div id="buscar-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de insumos</h4>
-        <input type="search" name="busca" id="buscar-insumos" placeholder="Buscar pelo nome do insumo">
-        
-        <a id="aviso" style="color: red">Nenhum insumo encontrado.</a>
+        <form id="form-busca-insumo" action="/buscar-insumos" method="GET">
+            <input type="text" name="nome" placeholder="Nome do insumo" required>
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-insumos"></div>
     </div>
 
     <main>
@@ -236,5 +252,8 @@
             </div>
         </section>
     </main>
+
+    <!-- Scripts -->
+    <script src="/scripts/empresa.js"></script>
 </body>
 </html>

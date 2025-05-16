@@ -13,7 +13,8 @@
             <img src="/img/icon.png" alt="Logo" style="width: 70px; height: auto;">
         </a>
         <div class="divider"></div>
-        <a href="/views/index.html" class="logout">
+        <!-- Adicionar aqui um botão de logout com id para o script controlar -->
+        <a href="#" id="btn-logout" class="logout">
             <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width: 40px; height: auto;">
             <br>
             <label class="legenda">Deslogar</label>
@@ -32,7 +33,7 @@
                     <option value="carteira-trabalho">Carteira de trabalho</option>
                     <option value="carteira-conselho-prof">Carteira do Conselho Profissional</option>
             </select>
-            <select name="tipo-sangue" id="tipo-sangue" required>
+            <select name="tipo_sangue" id="tipo-sangue" required>
                 <option>Tipo sanguíneo*</option>
                 <option value="a+">A+</option>
                 <option value="b+">B+</option>
@@ -44,20 +45,20 @@
                 <option value="o-">O-</option>
             </select>
             <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
-            <input type="email" name="email" placeholder="E-mail de doador">
+            <input type="email" name="email" placeholder="E-mail do doador">
             <input type="text" name="complemento" placeholder="Complemento">
 
             <div class="checkbox-group">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao1" required>
+                    <input type="checkbox" id="condicao1" name="condicao_1" required>
                     <label for="condicao1">O doador tem entre 16 e 69 anos</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao2" required>
+                    <input type="checkbox" id="condicao2" name="condicao_2" required>
                     <label for="condicao2">O doador tem mais de 50kg</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao3" required>
+                    <input type="checkbox" id="condicao3" name="condicao_3" required>
                     <label for="condicao3">Não tomou vacina contra gripe há 48 horas</label>
                 </div>
             </div>
@@ -69,46 +70,61 @@
     <div id="buscar-doador" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de doador/doação</h4>
-        <input type="search" name="busca" id="buscar-doador" placeholder="Buscar pelo nome do doador">
-        
-        <a id="aviso" style="color: red">Nenhum doador encontrado.</a> <!-- display none -->
-
+        <!-- Criar o formulário de busca -->
+        <form id="form-busca-doador">
+            <input type="search" name="query" placeholder="Buscar pelo nome do doador">
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-busca-doador"></div>
+        <a id="aviso" style="color: red; display: none;">Nenhum doador encontrado.</a>
     </div>
 
     <div id="buscar-bolsa-sangue" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de bolsa de sangue</h4>
-        <select name="tipo-sangue" id="tipo-sangue" required>
-            <option>Buscar pelo tipo de sangue</option>
-            <option value="a+">A+</option>
-            <option value="b+">B+</option>
-            <option value="ab+">AB+</option>
-            <option value="o+">O+</option>
-            <option value="a-">A-</option>
-            <option value="b-">B-</option>
-            <option value="ab-">AB-</option>
-            <option value="o-">O-</option>
-        </select>
-        <a id="aviso" style="color: red">Nenhuma bolsa de sangue encontrada.</a>
+        <form id="form-busca-bolsa">
+            <select name="tipo_sangue" required>
+                <option value="">Buscar pelo tipo de sangue</option>
+                <option value="a+">A+</option>
+                <option value="b+">B+</option>
+                <option value="ab+">AB+</option>
+                <option value="o+">O+</option>
+                <option value="a-">A-</option>
+                <option value="b-">B-</option>
+                <option value="ab-">AB-</option>
+                <option value="o-">O-</option>
+            </select>
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-bolsa"></div>
+        <a id="aviso" style="color: red; display: none;">Nenhuma bolsa de sangue encontrada.</a>
     </div>
 
     <div id="add-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Adicionar insumo</h4>
-        <form>
-            <input type="text" name="name" placeholder="Insumo* ex: seringas" required>
+        <form id="form-add-insumo">
+            <input type="text" name="nome" placeholder="Insumo* ex: seringas" required>
             <input type="number" name="quantidade" placeholder="Quantidade* ex: 20" required>
-
-            <button type="submit">Encaminhar doação</button>
+            <button type="submit">Adicionar Insumo</button>
         </form>
+        <div id="mensagem-sucesso" style="display: none; color: green; margin-top: 10px;">
+            Insumo adicionado com sucesso!
+        </div>
+        <div id="mensagem-erro" style="display: none; color: red; margin-top: 10px;">
+            Ocorreu um erro ao adicionar o insumo.
+        </div>
     </div>
 
     <div id="buscar-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de insumos</h4>
-        <input type="search" name="busca" id="buscar-insumos" placeholder="Buscar pelo nome do insumo">
-        
-        <a id="aviso" style="color: red">Nenhum insumo encontrado.</a>
+        <form id="form-busca-insumo">
+            <input type="search" name="nome" placeholder="Buscar pelo nome do insumo">
+            <button type="submit">Buscar</button>
+        </form>
+        <div id="resultado-insumos"></div>
+        <a id="aviso" style="color: red; display: none;">Nenhum insumo encontrado.</a>
     </div>
 
     <main>
@@ -150,5 +166,8 @@
             </div>
         </section>
     </main>
+
+    <!-- Scripts -->
+    <script src="/scripts/funcionario.js"></script>
 </body>
 </html>
