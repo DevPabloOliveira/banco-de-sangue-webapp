@@ -3,5 +3,5 @@ export default {
   //extensionsToTreatAsEsm: ['.js'],
   coverageDirectory: 'coverage',
   collectCoverageFrom: ['src/**/*.js'],
-  setupFilesAfterEnv: ['./tests/jest.setup.js'],
+  setupFilesAfterEnv: ['./tests/jest.setup.cjs'],
 };

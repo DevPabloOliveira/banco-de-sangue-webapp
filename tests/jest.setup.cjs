@@ -1,5 +1,5 @@
 // executa antes de todos os testes
-import mysql from 'mysql2/promise';
+const mysql = require('mysql2/promise');
 
 // Fornece um pool global para que cada teste possa importar
 global.testDbPool = await mysql.createPool({
