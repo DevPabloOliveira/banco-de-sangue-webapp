@@ -1,10 +1,8 @@
 name: Testes Automatizados (CI)
 
 on:
-  # Executa em qualquer push para a branch de testes
   push:
     branches: [ teste-ci-suite_v2 ]
-  # Executa quando um Pull Request é aberto ou atualizado para a branch principal
   pull_request:
     branches: [ main ]
 
@@ -22,9 +20,9 @@ jobs:
         image: mysql:8.0
         # Variáveis de ambiente para o container do MySQL
         env:
-          MYSQL_ROOT_PASSWORD: root # Senha para o usuário root
-          MYSQL_DATABASE: banco_sangue_test # Cria o banco de dados de teste automaticamente
-        # Opções para garantir que o MySQL esteja pronto antes de os testes começarem
+          MYSQL_ROOT_PASSWORD: root 
+          MYSQL_DATABASE: banco_sangue_test
+        
         ports:
           - 3306:3306
         options: >-
@@ -33,7 +31,7 @@ jobs:
           --health-timeout=5s
           --health-retries=3
 
-    # Define a sequência de passos 
+    # Define a sequência de passos que o trabalho executará
     steps:
       # 1. Baixa o código do seu repositório para a máquina virtual
       - name: Checkout do código
@@ -60,6 +58,8 @@ jobs:
         # Define as variáveis de ambiente que a aplicação precisa para conectar ao banco de dados do serviço
         run: npm test
         env:
+          # Adicionado para habilitar o suporte a Módulos ES no Jest dentro do CI
+          NODE_OPTIONS: "--experimental-vm-modules"
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
