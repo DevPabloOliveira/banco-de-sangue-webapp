@@ -1,0 +1,66 @@
+name: Testes Automatizados (CI)
+
+on:
+  # Executa em qualquer push para a branch de testes
+  push:
+    branches: [ teste-ci-suite_v2 ]
+  # Executa quando um Pull Request é aberto ou atualizado para a branch principal
+  pull_request:
+    branches: [ main ]
+
+# Define os trabalhos (jobs) a serem executados
+jobs:
+  # Nome do nosso trabalho. Pode ser qualquer nome.
+  build-and-test:
+    # O tipo de máquina virtual que o trabalho vai rodar
+    runs-on: ubuntu-latest
+
+    # Define serviços de terceiros que o nosso trabalho precisa. Neste caso, um banco de dados MySQL.
+    services:
+      mysql:
+        # Usa uma imagem Docker do MySQL versão 8.0
+        image: mysql:8.0
+        # Variáveis de ambiente para o container do MySQL
+        env:
+          MYSQL_ROOT_PASSWORD: root # Senha para o usuário root
+          MYSQL_DATABASE: banco_sangue_test # Cria o banco de dados de teste automaticamente
+        # Opções para garantir que o MySQL esteja pronto antes de os testes começarem
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    # Define a sequência de passos 
+    steps:
+      # 1. Baixa o código do seu repositório para a máquina virtual
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      # 2. Configura o ambiente Node.js na versão 20
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm' # Habilita cache para acelerar a instalação de dependências
+
+      # 3. Instala as dependências do projeto
+      - name: Instalar dependências
+        run: npm install
+
+      # 4. Popula o banco de dados de teste com a estrutura e os dados
+      - name: Preparar o banco de dados de teste
+        # Este comando executa o seu script SQL no serviço MySQL que criamos acima
+        run: mysql -h 127.0.0.1 -u root -proot banco_sangue_test < banco_sangue.sql
+        
+      # 5. Executa a suíte de testes
+      - name: Rodar os testes
+        # Define as variáveis de ambiente que a aplicação precisa para conectar ao banco de dados do serviço
+        run: npm test
+        env:
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: root
+          DB_DATABASE: banco_sangue_test
