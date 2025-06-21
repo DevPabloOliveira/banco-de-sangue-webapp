@@ -43,8 +43,10 @@ jobs:
 
       # 3. Instala as dependências do projeto
       - name: Instalar dependências
-        run: npm install
-
+        # Usamos 'npm ci' que é o comando padrão para ambientes de CI.
+        # Ele instala tanto as dependências normais quanto as de desenvolvimento.
+        run: npm ci
+        
       # 4. Popula o banco de dados de teste com a estrutura e os dados
       - name: Preparar o banco de dados de teste
         # Este comando executa o seu script SQL no serviço MySQL que criamos acima
@@ -52,7 +54,6 @@ jobs:
         
       # 5. Executa a suíte de testes
       - name: Rodar os testes
-        # Usamos 'npx jest' para garantir que o executável do Jest seja encontrado no ambiente de CI.
         run: npx jest
         env:
           # Adicionado para habilitar o suporte a Módulos ES no Jest dentro do CI
