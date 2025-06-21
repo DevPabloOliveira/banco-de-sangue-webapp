@@ -29,7 +29,7 @@ CREATE TABLE `bolsas_sangue` (
   `quantidade` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -61,7 +61,7 @@ CREATE TABLE `doadores` (
   `condicao_3` tinyint(1) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,7 +108,7 @@ CREATE TABLE `empresas` (
   UNIQUE KEY `cnpj` (`cnpj`),
   KEY `admin_id` (`admin_id`),
   CONSTRAINT `empresas_ibfk_1` FOREIGN KEY (`admin_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -143,7 +143,7 @@ CREATE TABLE `funcionarios` (
   UNIQUE KEY `cpf` (`cpf`),
   KEY `empresa_id` (`empresa_id`),
   CONSTRAINT `funcionarios_ibfk_1` FOREIGN KEY (`empresa_id`) REFERENCES `empresas` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -153,15 +153,6 @@ CREATE TABLE `funcionarios` (
 LOCK TABLES `funcionarios` WRITE;
 /*!40000 ALTER TABLE `funcionarios` DISABLE KEYS */;
 INSERT INTO `funcionarios` VALUES
-(1,'Marco','limpeza','23232424','42342','92444444','marco@gmail.com','3333',NULL,'2024-12-10 05:08:14',''),
-(2,'Pablo','balconista','12122331','Qjejejss','969669988','','',NULL,'2024-12-10 05:15:12',''),
-(3,'Bru','estoque','123457','','','','',NULL,'2024-12-10 13:32:21',''),
-(4,'aaaaaaaaaaaaa','estoque','11111111111','11111111111','111111111111','AX@gmail.com','aaaaaaaaaaaaaaaaaaaa',NULL,'2024-12-10 18:21:06',''),
-(5,'Teste F','limpeza','3242424','2424242','4242424','t@gmail.com','dwsdsdfsf',NULL,'2024-12-10 18:23:40',''),
-(8,'zzzz','balconista','23232','323232','23234242','z@gmail.com','zzzzz',NULL,'2024-12-10 18:30:08',''),
-(10,'nnnnnnnnnnnnnnnn','balconista','7777777','777777','7777777777','z@gmail.com','77777',NULL,'2024-12-10 18:32:15',''),
-(11,'Zeca','limpeza','232433255223','32454657','92433535','zeca@gmail.com','Rua do Medo',NULL,'2024-12-10 18:37:01',''),
-(12,'Marco Polo','limpeza','762555333','123456','9212345678','polo@gmail.com','Sei lá',NULL,'2024-12-10 20:33:44',''),
 (13,'z','limpeza','212121212','212121233','2133212121','z@z','124',NULL,'2024-12-10 22:11:10','$2b$10$g/LPXjQqIDuWmulLnY1Xg.NkvaRbmceGJd5yhW3tnc0YW5t6e7km2'),
 (14,'Cris','limpeza','12345678901','sssssss','','bruno2@gmail.com','',NULL,'2024-12-11 01:51:44','$2b$10$PjpHI1gzfIf371DN9uNW/O51/Qm.KISkT3xBMDhDJL69NIG69LjPK'),
 (15,'Cara de Lua','limpeza','32242424','23232','3242424','A@A','123456',NULL,'2024-12-11 02:32:03','$2b$10$StZnrGjR5asBnjSjc2UzE.CArNxe/ljmQ103ds2S.9g5CmF3PtBo.'),
@@ -184,7 +175,7 @@ CREATE TABLE `insumos` (
   `quantidade` int(11) NOT NULL,
   `created_at` timestamp NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -228,7 +219,7 @@ CREATE TABLE `users` (
   `password` varchar(100) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_uca1400_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
