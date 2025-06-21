@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banco de Sangue - Recuperar Senha</title>
+    <link rel="icon" href="/img/icon.png">
+    <!-- Reutilizando o estilo da página inicial para consistência -->
+    <link rel="stylesheet" href="/styles/index.css">
+    <style>
+        /* Estilos adicionais para centralizar o formulário */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+            padding: 20px;
+        }
+        .form-box {
+            background-color: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .form-box h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .form-box p {
+            margin-bottom: 25px;
+            color: #666;
+        }
+        #message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>Recuperar Senha</h2>
+            <p>Digite seu e-mail para receber as instruções de recuperação.</p>
+            <form id="form-recuperacao" action="/recuperar-senha" method="POST">
+                <input type="email" name="email" placeholder="Digite seu e-mail*" required>
+                <button type="submit">Enviar</button>
+            </form>
+            <div id="message"></div>
+            <a href="/" style="display: block; margin-top: 20px;">Voltar para a página inicial</a>
+        </div>
+    </div>
+
+    <script>
+        // Script para lidar com o envio do formulário dinamicamente
+        document.getElementById('form-recuperacao').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = this.querySelector('input[name="email"]').value;
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const response = await fetch('/recuperar-senha', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'success';
+                } else {
+                    messageDiv.textContent = result.message || 'Ocorreu um erro.';
+                    messageDiv.className = 'error';
+                }
+            } catch (err) {
+                messageDiv.textContent = 'Erro de conexão. Tente novamente.';
+                messageDiv.className = 'error';
+            }
+        });
+    </script>
+</body>
+</html>
