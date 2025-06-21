@@ -1,19 +1,24 @@
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise'; 
 import dotenv from 'dotenv'; // 1. Adicionado para ler o .env
 
 // 2. Comando que carrega as variáveis de ambiente
 dotenv.config();
 
 // 3. Pool de conexão agora usa as variáveis do process.env
-export const connection = mysql.createPool({
+export function createPool (opts = {}) {
+  return mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
-}).promise(); 
+    queueLimit: 0,
+    ...opts              // permite stub nos testes
+  });
+}
+
+export const connection = createPool();   // agora createPool existe
 
 //Adicionar Usuário
 export function adicionarUsuario(name, nameEmpresa, cnpj, endereco, email, password, callback) {

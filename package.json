@@ -1,17 +1,20 @@
 {
   "name": "banco-de-sangue-webapp",
   "version": "1.0.0",
-  "description": "Banco de Sangue WebApp é uma aplicação web para gerenciar unidades de coleta de sangue. Administradores podem cadastrar doadores e funcionários, controlar o estoque e registrar doações. Focado em segurança e eficiência, facilita o acompanhamento das atividades e o monitoramento das coletas realizadas.",
+  "description": "Aplicação web para gerenciar unidades de coleta de sangue.",
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "start": "node app.js",
+    "test": "cross-env NODE_ENV=test jest",
+    "test:watch": "npm test -- --watch",
+    "coverage": "npm test -- --coverage --runInBand"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DevPabloOliveira/banco-de-sangue-webapp.git"
   },
-  "author": "",
+  "author": "Pablo Oliveira",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/DevPabloOliveira/banco-de-sangue-webapp/issues"
@@ -19,13 +22,20 @@
   "homepage": "https://github.com/DevPabloOliveira/banco-de-sangue-webapp#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
-    "mysql2": "^3.10.0"
+    "mysql2": "^3.10.0",
+    "pino": "^9.7.0",
+    "pino-pretty": "^13.0.0"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5",
+    "@swc/core": "^1.12.5",
+    "@swc/jest": "^0.2.38",
+    "cross-env": "^7.0.3",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "jest-fetch-mock": "^3.0.3",
     "supertest": "^7.0.0"
   }
 }

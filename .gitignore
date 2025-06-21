@@ -178,4 +178,4 @@ Thumbs.db
 
 # Arquivos de Build
 /dist
-/build
+/buildnode_modules/
