@@ -1,13 +1,20 @@
+# Nome do fluxo de trabalho que aparecerá na aba "Actions" do GitHub
 name: Testes Automatizados (CI)
 
+# Define quando este fluxo de trabalho deve ser executado
 on:
+  # Executa em qualquer push para a branch de testes
   push:
     branches: [ teste-ci-suite_v2 ]
+  # Executa quando um Pull Request é aberto ou atualizado para a branch principal
   pull_request:
     branches: [ main ]
 
+# Define os trabalhos (jobs) a serem executados
 jobs:
+  # Nome do nosso trabalho. Pode ser qualquer nome.
   build-and-test:
+    # O tipo de máquina virtual que o trabalho vai rodar
     runs-on: ubuntu-latest
 
     # Define serviços de terceiros que o nosso trabalho precisa. Neste caso, um banco de dados MySQL.
@@ -41,10 +48,10 @@ jobs:
           node-version: '20'
           cache: 'npm' # Habilita cache para acelerar a instalação de dependências
 
-      # 3. Instala as dependências do projeto
+      # 3. Instala todas as dependências (incluindo devDependencies)
       - name: Instalar dependências
-        # Usamos 'npm ci' que é o comando padrão para ambientes de CI.
-        # Ele instala tanto as dependências normais quanto as de desenvolvimento.
+        # 'npm ci' é o comando recomendado para CI. Ele usa o package-lock.json
+        # para uma instalação rápida e consistente.
         run: npm ci
         
       # 4. Popula o banco de dados de teste com a estrutura e os dados
@@ -54,10 +61,12 @@ jobs:
         
       # 5. Executa a suíte de testes
       - name: Rodar os testes
-        run: npx jest
+        # 'npm test' é a forma padrão de executar os testes, usando o script
+        # definido no seu package.json.
+        run: npm test
         env:
-          # Adicionado para habilitar o suporte a Módulos ES no Jest dentro do CI
-          NODE_OPTIONS: "--experimental-vm-modules"
+          # Define as variáveis de ambiente que o Node.js e a aplicação precisam durante os testes
+          NODE_OPTIONS: "--experimental-vm-modules" # Essencial para Módulos ES no Jest
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
