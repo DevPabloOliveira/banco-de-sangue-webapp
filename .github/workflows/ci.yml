@@ -1,20 +1,13 @@
-# Nome do fluxo de trabalho que aparecerá na aba "Actions" do GitHub
 name: Testes Automatizados (CI)
 
-# Define quando este fluxo de trabalho deve ser executado
 on:
-  # Executa em qualquer push para a branch de testes
   push:
     branches: [ teste-ci-suite_v2 ]
-  # Executa quando um Pull Request é aberto ou atualizado para a branch principal
   pull_request:
     branches: [ main ]
 
-# Define os trabalhos (jobs) a serem executados
 jobs:
-  # Nome do nosso trabalho. Pode ser qualquer nome.
   build-and-test:
-    # O tipo de máquina virtual que o trabalho vai rodar
     runs-on: ubuntu-latest
 
     # Define serviços de terceiros que o nosso trabalho precisa. Neste caso, um banco de dados MySQL.
