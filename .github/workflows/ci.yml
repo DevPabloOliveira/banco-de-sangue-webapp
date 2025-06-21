@@ -1,8 +1,12 @@
+# Nome do fluxo de trabalho que aparecerá na aba "Actions" do GitHub
 name: Testes Automatizados (CI)
 
+# Define quando este fluxo de trabalho deve ser executado
 on:
+  # Executa em qualquer push para a branch de testes
   push:
     branches: [ teste-ci-suite_v2 ]
+  # Executa quando um Pull Request é aberto ou atualizado para a branch principal
   pull_request:
     branches: [ main ]
 
@@ -20,9 +24,9 @@ jobs:
         image: mysql:8.0
         # Variáveis de ambiente para o container do MySQL
         env:
-          MYSQL_ROOT_PASSWORD: root 
-          MYSQL_DATABASE: banco_sangue_test
-        
+          MYSQL_ROOT_PASSWORD: root # Senha para o usuário root
+          MYSQL_DATABASE: banco_sangue_test # Cria o banco de dados de teste automaticamente
+        # Opções para garantir que o MySQL esteja pronto antes de os testes começarem
         ports:
           - 3306:3306
         options: >-
@@ -55,8 +59,8 @@ jobs:
         
       # 5. Executa a suíte de testes
       - name: Rodar os testes
-        # Define as variáveis de ambiente que a aplicação precisa para conectar ao banco de dados do serviço
-        run: npm test
+        # Usamos 'npx jest' para garantir que o executável do Jest seja encontrado no ambiente de CI.
+        run: npx jest
         env:
           # Adicionado para habilitar o suporte a Módulos ES no Jest dentro do CI
           NODE_OPTIONS: "--experimental-vm-modules"
