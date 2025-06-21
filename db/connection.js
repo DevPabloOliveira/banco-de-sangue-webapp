@@ -1,14 +1,19 @@
 import mysql from 'mysql2';
+import dotenv from 'dotenv'; // 1. Adicionado para ler o .env
 
+// 2. Comando que carrega as variáveis de ambiente
+dotenv.config();
+
+// 3. Pool de conexão agora usa as variáveis do process.env
 export const connection = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'banco_sangue',
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
-});
+}).promise(); 
 
 //Adicionar Usuário
 export function adicionarUsuario(name, nameEmpresa, cnpj, endereco, email, password, callback) {

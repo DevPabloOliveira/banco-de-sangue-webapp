@@ -105,70 +105,55 @@ app.post('/cadastrar', async (req, res) => {
 
 
 // Endpoint entrar (login)
-app.post('/entrar', (req, res) => {
-  const { email, password } = req.body;
+app.post('/entrar', async (req, res) => { // A rota agora é 'async'
+    try {
+        const { email, password } = req.body;
 
-  // Primeiro, verificar se o e-mail pertence a um administrador
-  const queryAdmin = 'SELECT * FROM users WHERE email = ?';
-  connection.query(queryAdmin, [email], async (err, adminResults) => {
-      if (err) {
-          return res
-              .status(500)
-              .json({ success: false, message: 'Erro ao consultar dados' });
-      }
+        // 1. Procura na tabela de administradores (users)
+        const adminQuery = 'SELECT * FROM users WHERE email = ?';
+        const [adminResults] = await connection.query(adminQuery, [email]);
 
-      if (adminResults.length > 0) {
-          const adminRecord = adminResults[0];
+        if (adminResults.length > 0) {
+            const adminRecord = adminResults[0];
+            const isPasswordValid = await bcrypt.compare(password, adminRecord.password || '');
 
-          // Comparar a senha digitada com a senha criptografada
-          const isPasswordValid = await bcrypt.compare(password, adminRecord.password);
+            if (isPasswordValid) {
+                req.session.userId = adminRecord.id;
+                req.session.userName = adminRecord.name;
+                req.session.userType = 'admin';
+                return res.redirect('/empresa'); // Redireciona em caso de sucesso
+            } else {
+                return res.status(401).json({ success: false, message: 'Senha incorreta!' });
+            }
+        }
 
-          if (isPasswordValid) {
-              req.session.userId = adminRecord.id;
-              req.session.userName = adminRecord.name;
-              req.session.userType = 'admin'; // Identificar como administrador
-              return res.redirect('/empresa');
-          } else {
-              return res
-                  .status(401)
-                  .json({ success: false, message: 'Senha incorreta!' });
-          }
-      }
+        // 2. Se não for admin, procura na tabela de funcionários
+        const funcQuery = 'SELECT * FROM funcionarios WHERE email = ?';
+        const [funcResults] = await connection.query(funcQuery, [email]);
 
-      // Se não for administrador, verificar se é um funcionário
-      const queryFuncionario = 'SELECT * FROM funcionarios WHERE email = ?';
-      connection.query(queryFuncionario, [email], async (err, funcResults) => {
-          if (err) {
-              return res
-                  .status(500)
-                  .json({ success: false, message: 'Erro ao consultar dados' });
-          }
+        if (funcResults.length > 0) {
+            const funcionarioRecord = funcResults[0];
+            const isPasswordValid = await bcrypt.compare(password, funcionarioRecord.password || '');
+            
+            if (isPasswordValid) {
+                req.session.userId = funcionarioRecord.id;
+                req.session.userName = funcionarioRecord.name;
+                req.session.userType = 'funcionario';
+                return res.redirect('/funcionario'); // Redireciona em caso de sucesso
+            } else {
+                return res.status(401).json({ success: false, message: 'Senha incorreta!' });
+            }
+        }
 
-          if (funcResults.length === 0) {
-              return res
-                  .status(404)
-                  .json({ success: false, message: 'E-mail não encontrado!' });
-          } else {
-              const funcionarioRecord = funcResults[0];
+        // 3. Se não encontrou o e-mail em nenhuma das tabelas
+        return res.status(404).json({ success: false, message: 'E-mail não encontrado!' });
 
-              // Comparar a senha digitada com a senha criptografada
-              const isPasswordValid = await bcrypt.compare(password, funcionarioRecord.password);
-
-              if (isPasswordValid) {
-                  req.session.userId = funcionarioRecord.id;
-                  req.session.userName = funcionarioRecord.name;
-                  req.session.userType = 'funcionario'; // Identificar como funcionário
-                  return res.redirect('/funcionario');
-              } else {
-                  return res
-                      .status(401)
-                      .json({ success: false, message: 'Senha incorreta!' });
-              }
-          }
-      });
-  });
+    } catch (error) {
+        // Um único 'catch' para capturar qualquer erro (do banco, do bcrypt, etc.)
+        console.error('Erro durante o processo de login:', error);
+        return res.status(500).json({ success: false, message: 'Erro interno no servidor.' });
+    }
 });
-
 
 // Rota sair (logout)
 app.get('/sair', (req, res) => {
@@ -285,47 +270,50 @@ app.post('/deletar', (req, res) => {
 });
 
 // Adicionar Doador
-app.post('/add-doacao', (req, res) => {
-  const {
-      name,
-      documento,
-      tipo_sangue,
-      telefone,
-      email,
-      complemento,
-      condicao_1,
-      condicao_2,
-      condicao_3,
-  } = req.body;
+app.post('/add-doacao', async (req, res) => {
+    try {
+        const {
+            name,
+            documento,
+            tipo_sangue,
+            telefone,
+            email,
+            complemento,
+            condicao_1,
+            condicao_2,
+            condicao_3,
+        } = req.body;
 
-  adicionarDoador(
-      {
-          name,
-          documento,
-          tipo_sangue,
-          telefone,
-          email,
-          complemento,
-          condicao_1: condicao_1 === 'on',
-          condicao_2: condicao_2 === 'on',
-          condicao_3: condicao_3 === 'on',
-      },
-      (err, result) => {
-          if (err) {
-              console.error('Erro ao registrar doador:', err);
-              return res.status(500).send('Erro ao registrar doador.');
-          }
+        const query = `
+            INSERT INTO doadores 
+            (name, documento, tipo_sangue, telefone, email, complemento, condicao_1, condicao_2, condicao_3)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        
+        await connection.query(query, [
+            name,
+            documento,
+            tipo_sangue,
+            telefone,
+            email,
+            complemento,
+            condicao_1 === 'on',
+            condicao_2 === 'on',
+            condicao_3 === 'on',
+        ]);
 
-          // Verificar o tipo de usuário na sessão
-          if (req.session.userType === 'admin') {
-              return res.redirect('/empresa'); // Redirecionar para a página do administrador
-          } else if (req.session.userType === 'funcionario') {
-              return res.redirect('/funcionario'); // Redirecionar para a página do funcionário
-          } else {
-              return res.redirect('/'); // Fallback para a página inicial
-          }
-      }
-  );
+        // Redireciona com base no tipo de usuário da sessão
+        if (req.session.userType === 'admin') {
+            return res.redirect('/empresa');
+        } else if (req.session.userType === 'funcionario') {
+            return res.redirect('/funcionario');
+        } else {
+            return res.redirect('/');
+        }
+    } catch (error) {
+        console.error('Erro ao registrar doador:', error);
+        return res.status(500).send('Erro ao registrar doador.');
+    }
 });
 
 
@@ -350,46 +338,38 @@ app.post('/add-doacao', (req, res) => {
 });
 
 //Adicionar funcionario
-app.post('/add-fun', (req, res) => {
-    const {
-        name, cargo, cpf, pis, telefone, email, complemento, empresa_id, password
-    } = req.body;
+app.post('/add-fun', async (req, res) => {
+    try {
+        const {
+            name, cargo, cpf, pis, telefone, email, complemento, empresa_id, password
+        } = req.body;
 
-    // Verificar se o CPF já existe
-    const verificarCpf = 'SELECT * FROM funcionarios WHERE cpf = ?';
-    connection.query(verificarCpf, [cpf], (err, results) => {
-        if (err) {
-            console.error('Erro ao verificar CPF:', err);
-            return res.status(500).json({ success: false, message: 'Erro no servidor.' });
-        }
+        // Verificar se o CPF já existe
+        const verificarCpfQuery = 'SELECT * FROM funcionarios WHERE cpf = ?';
+        const [existingFuncionarios] = await connection.query(verificarCpfQuery, [cpf]);
 
-        if (results.length > 0) {
+        if (existingFuncionarios.length > 0) {
             return res.status(400).json({ success: false, message: 'CPF já cadastrado.' });
         }
 
         // Hash da senha
-        bcrypt.hash(password, 10, (err, hashedPassword) => {
-            if (err) {
-                console.error('Erro ao hashear senha:', err);
-                return res.status(500).json({ success: false, message: 'Erro no servidor.' });
-            }
+        const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Inserir funcionário no banco de dados
-            const query = `
-                INSERT INTO funcionarios (name, cargo, cpf, pis, telefone, email, complemento, empresa_id, password)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `;
-            connection.query(query, [name, cargo, cpf, pis, telefone, email, complemento, empresa_id || null, hashedPassword], (err, results) => {
-                if (err) {
-                    console.error('Erro ao adicionar funcionário:', err);
-                    return res.status(500).json({ success: false, message: 'Erro no servidor.' });
-                }
+        // Inserir funcionário no banco de dados
+        const insertQuery = `
+            INSERT INTO funcionarios (name, cargo, cpf, pis, telefone, email, complemento, empresa_id, password)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `;
+        await connection.query(insertQuery, [name, cargo, cpf, pis, telefone, email, complemento, empresa_id || null, hashedPassword]);
 
-                res.status(201).json({ success: true, message: 'Funcionário cadastrado com sucesso!' });
-            });
-        });
-    });
+        return res.status(201).json({ success: true, message: 'Funcionário cadastrado com sucesso!' });
+
+    } catch (error) {
+        console.error('Erro ao adicionar funcionário:', error);
+        return res.status(500).json({ success: false, message: 'Erro no servidor.' });
+    }
 });
+
 
 //Login funcionario
 app.post('/login-funcionario', (req, res) => {
@@ -542,7 +522,11 @@ app.post('/recuperar-senha', (req, res) => {
 
   
 
-// Inicialização do servidor
-app.listen(3000, () => {
-  console.log('Servidor rodando na porta 3000');
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(3000, () => {
+    console.log('Servidor rodando na porta 3000');
+  });
+}
+
+// Exporta o app para que ele possa ser importado e usado pelos nossos testes
+export default app; 
