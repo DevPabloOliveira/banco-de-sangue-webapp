@@ -5,12 +5,12 @@ document.addEventListener("DOMContentLoaded", () => {
         .then(data => {
             if (!data.isAuthenticated) {
                 // Redirecionar se não autenticado
-                window.location.href = '/';
+                window.location.assign('/');
             }
         })
         .catch(error => {
             console.error('Erro ao verificar autenticação:', error);
-            window.location.href = '/';
+            window.location.assign('/');
         });
 
     const btnLogout = document.getElementById('btn-logout');
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             fetch('/sair')
                 .then(() => {
-                    window.location.href = '/';
+                    window.location.assign('/');
                 })
                 .catch(error => {
                     console.error('Erro ao encerrar sessão:', error);

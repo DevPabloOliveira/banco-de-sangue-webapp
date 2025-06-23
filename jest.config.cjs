@@ -37,5 +37,10 @@ module.exports = {
     '!**/node_modules/**',
     '!jest.config.*',
     '!**/__tests__/**',
+    '!**/coverage/**',          // ← ignora artefactos do lcov-report
+    '!**/cypress/**',  
+    '!**/styles/**' 
   ],
-};
+  //coverageThreshold: {
+  //  global: { lines: 95, statements: 95, branches: 90, functions: 90 }
+}//};

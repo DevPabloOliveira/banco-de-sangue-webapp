@@ -179,3 +179,16 @@ Thumbs.db
 # Arquivos de Build
 /dist
 /buildnode_modules/
+
+# dependências
+node_modules/
+
+# relatórios / cache
+coverage/
+.tmp/
+jest*.log
+
+# Cypress artefatos locais
+cypress/videos/
+cypress/screenshots/
+
