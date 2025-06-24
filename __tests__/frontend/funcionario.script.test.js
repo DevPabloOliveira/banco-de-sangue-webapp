@@ -1,30 +1,20 @@
-/* === __tests__/frontend/funcionario.script.test.js (ATUALIZADO) === */
-
 /**
  * @jest-environment jsdom
  */
 import fetchMock from 'jest-fetch-mock';
 import { JSDOM } from 'jsdom';
-import fs from 'fs';
-import path from 'path';
+import { bootstrap } from '../../scripts/funcionario.js'; // Ajuste: Importa o bootstrap
 
-// --- Configuração global do fetch mock ---
 fetchMock.enableMocks();
 const flushPromises = () => new Promise(setImmediate);
-
-// carrega o script original
-const funcionarioScript = fs.readFileSync(
-  path.resolve(__dirname, '../../scripts/funcionario.js'),
-  'utf8'
-);
 
 describe('scripts/funcionario.js', () => {
   let document;
   let window;
 
   beforeEach(() => {
-    jest.resetModules();          // esvazia cache do require
-    fetchMock.resetMocks();       // limpa chamadas anteriores
+    jest.resetModules();
+    fetchMock.resetMocks();
 
     const dom = new JSDOM(`
       <!DOCTYPE html>
@@ -37,67 +27,59 @@ describe('scripts/funcionario.js', () => {
       </html>
     `, { url: 'http://localhost/funcionario' });
 
-    window   = dom.window;
+    window = dom.window;
     document = dom.window.document;
 
-    // mock de location.assign para verificação
+    // Mock do window.location para testar redirecionamentos
     Object.defineProperty(window, 'location', {
       writable: true,
       value: { href: dom.window.location.href, assign: jest.fn() },
     });
 
-    // expõe DOM + fetch no escopo global antes do require
-    global.window   = window;
+    // Expõe o ambiente JSDOM para o escopo global
+    global.window = window;
     global.document = document;
     global.location = window.location;
-    global.fetch    = fetchMock;
-
-    // injeta o arquivo de script (necessário p/ JSDOM)
-    const scriptEl = document.createElement('script');
-    scriptEl.textContent = funcionarioScript;
-    document.body.appendChild(scriptEl);
-    require('../../scripts/funcionario.js');
+    global.fetch = fetchMock;
   });
 
   it('deve redirecionar para / se não estiver autenticado', async () => {
+    // Simula a API retornando que o usuário não está logado
     fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: false }));
 
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
+    // Ajuste: Chama a função de inicialização diretamente
+    await bootstrap();
     await flushPromises();
 
+    // Verifica se o redirecionamento foi tentado
     expect(window.location.assign).toHaveBeenCalledWith('/');
   });
 
   it('deve preencher o resultado ao buscar um doador com sucesso', async () => {
-    // 1ª resposta → status de autenticação
+    // 1ª resposta → autenticação bem-sucedida
     fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: true }));
     // 2ª resposta → resultado da busca
     fetchMock.mockResponseOnce(
       JSON.stringify({ success: true, doadores: [{ name: 'Ana', tipo_sangue: 'A+' }] })
     );
 
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
-    await flushPromises();   // aguarda /auth-status
+    // Roda a inicialização para registrar os listeners
+    await bootstrap();
+    await flushPromises();
 
-    // dispara submit
+    // Dispara a submissão do formulário
     const form = document.getElementById('form-busca-doador');
     form.dispatchEvent(new window.Event('submit', { bubbles: true }));
-    await flushPromises();   // aguarda /buscar-doador
+    await flushPromises();
 
-    /* ─────────── Asserções ─────────── */
-
-    // pelo menos dois fetches (status + busca) – pode haver 4
-    expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(2);
-
-    // deve existir chamada para a rota de busca esperada
+    // Verifica se a chamada à API foi feita corretamente
     const houveBusca = fetchMock.mock.calls.some(
       ([url]) => url.includes('/buscar-doador?query=Ana')
     );
     expect(houveBusca).toBe(true);
 
-    // DOM atualizado com resultado
+    // Verifica se o DOM foi atualizado com o resultado
     const resultadoDiv = document.getElementById('resultado-busca-doador');
-    expect(resultadoDiv.textContent)
-      .toContain('Nome: Ana, Tipo Sanguíneo: A+');
+    expect(resultadoDiv.textContent).toContain('Nome: Ana, Tipo: A+');
   });
 });

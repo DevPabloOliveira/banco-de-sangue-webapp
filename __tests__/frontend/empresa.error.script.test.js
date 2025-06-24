@@ -1,17 +1,16 @@
 /**
  * @jest-environment jsdom
- */
-
-/**
- * Fluxos “tristes” – scripts/empresa.js
+ *
+ * __tests__/frontend/empresa.error.script.test.js
+ * Exercita os "caminhos tristes" do script da empresa.
  */
 import fetchMock from 'jest-fetch-mock';
 import { JSDOM } from 'jsdom';
+import { bootstrap } from '../../scripts/empresa.js'; // Ajuste: Importa o bootstrap
 
 fetchMock.enableMocks();
 
-const step  = () => new Promise(setImmediate);
-const flush = async (n = 80) => { while (n--) await step(); };
+const flush = () => new Promise(setImmediate);
 
 describe('scripts/empresa.js – fluxos de erro', () => {
   let window, document;
@@ -28,43 +27,51 @@ describe('scripts/empresa.js – fluxos de erro', () => {
     jest.resetModules();
     fetchMock.resetMocks();
 
-    ({ window } = mount());
-    document    = window.document;
+    const dom = mount();
+    window = dom.window;
+    document = dom.window.document;
 
-    global.window   = window;
+    // Mock para a função de redirecionamento
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { href: dom.window.location.href, assign: jest.fn() },
+    });
+
+    global.window = window;
     global.document = document;
     global.location = window.location;
-    global.fetch    = window.fetch = fetchMock;
-
-    // carrega o script alvo DEPOIS de setar os mocks
-    require('../../scripts/empresa.js');
+    global.fetch = window.fetch = fetchMock;
   });
 
-  it('consulta /auth-status apenas uma vez quando não autenticado', async () => {
+  it('deve redirecionar se a autenticação falhar', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: false }));
 
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
-    window.dispatchEvent  (new window.Event('load'));
+    // Chama o bootstrap, que deve falhar e redirecionar
+    await bootstrap();
     await flush();
 
-    expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(1);
-    expect(fetchMock.mock.calls.some(([u]) => u.includes('/auth-status'))).toBe(true);
+    // Verifica se a chamada de autenticação foi feita
+    expect(fetchMock.mock.calls.length).toBe(1);
+    expect(fetchMock.mock.calls[0][0]).toContain('/auth-status');
+
+    // Verifica se o redirecionamento ocorreu
+    expect(window.location.assign).toHaveBeenCalledWith('/');
   });
 
   it('exibe “Nenhum doador…” se /buscar-bolsa-sangue retorna lista vazia', async () => {
-    fetchMock
-      .mockResponseOnce(JSON.stringify({ isAuthenticated: true }))
-      .mockResponseOnce(JSON.stringify({ success: true, doadores: [] }));
+    // 1. Mock para auth OK
+    fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: true }));
+    // 2. Mock para busca retornar vazio
+    fetchMock.mockResponseOnce(JSON.stringify({ success: true, doadores: [] }));
 
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
-    window.dispatchEvent  (new window.Event('load'));
+    await bootstrap();
     await flush();
 
-    document.getElementById('form-busca-bolsa')
-            .dispatchEvent(new window.Event('submit', { bubbles: true }));
+    document.getElementById('form-busca-bolsa').dispatchEvent(new window.Event('submit', { bubbles: true }));
     await flush();
 
- expect(document.getElementById('resultado-bolsa').textContent.toLowerCase())
-   .toContain('nenhum doador');
+    // Verifica se a div de resultado contém a mensagem de erro
+    const resultado = document.getElementById('resultado-bolsa');
+    expect(resultado.textContent.toLowerCase()).toContain('nenhum doador');
   });
 });

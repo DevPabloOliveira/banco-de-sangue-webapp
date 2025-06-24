@@ -1,12 +1,13 @@
-/* === __tests__/frontend/empresa.script.test.js (CORRIGIDO) === */
+/* === __tests__/frontend/empresa.script.test.js (AJUSTADO) === */
 
 /**
  * @jest-environment jsdom
  */
 import fetchMock from 'jest-fetch-mock';
 import { JSDOM } from 'jsdom';
-import fs from 'fs';
-import path from 'path';
+
+// AJUSTE: O bootstrap é importado diretamente para ser chamado nos testes.
+import { bootstrap } from '../../scripts/empresa.js';
 
 // Habilita o mock global para a função fetch
 fetchMock.enableMocks();
@@ -14,21 +15,15 @@ fetchMock.enableMocks();
 // Utilitário para aguardar que todas as promises pendentes sejam resolvidas
 const flushPromises = () => new Promise(setImmediate);
 
-// Carrega o conteúdo do script que queremos testar
-const empresaScript = fs.readFileSync(
-  path.resolve(__dirname, '../../scripts/empresa.js'),
-  'utf8'
-);
-
 describe('scripts/empresa.js', () => {
   let document;
   let window;
 
   beforeEach(() => {
-    jest.resetModules(); 
+    jest.resetModules();
     // Reseta os mocks antes de cada teste para garantir isolamento
     fetchMock.resetMocks();
-    
+
     // Cria um ambiente JSDOM limpo para cada teste
     const dom = new JSDOM(`
       <!DOCTYPE html>
@@ -43,36 +38,29 @@ describe('scripts/empresa.js', () => {
     window = dom.window;
     document = dom.window.document;
 
-    // CORREÇÃO PRINCIPAL: Substituímos o window.location por um mock controlável
-    // para evitar erros de configuração e permitir a verificação do redirecionamento.
+    // Substituímos o window.location por um mock controlável
+    // para permitir a verificação do redirecionamento.
     Object.defineProperty(window, 'location', {
       writable: true,
       value: { href: dom.window.location.href, assign: jest.fn() },
     });
-    
-    // Injeta o script no nosso DOM simulado
-    const scriptEl = document.createElement('script');
-    scriptEl.textContent = empresaScript;
-    document.body.appendChild(scriptEl);
-    /* liga o DOM recém-criado ao escopo global que o script enxerga */
-    global.window   = window;
+
+    // liga o DOM recém-criado ao escopo global que o script enxerga
+    global.window = window;
     global.document = document;
     global.location = window.location;
-    /* garante que fetch global é o mesmo mock */
+    // garante que fetch global é o mesmo mock
     global.fetch = fetchMock;
-
-    // carrega o script _depois_ de setar os globals
-    require('../../scripts/empresa.js');
   });
 
   it('deve redirecionar para / quando o usuário não está autenticado', async () => {
     // Simula a resposta da API dizendo que o usuário não está logado
     fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: false }));
 
-    // Dispara o evento que o script está esperando
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
-    
-    // Aguarda a execução da lógica assíncrona (fetch)
+    // AJUSTE: Chama a função de inicialização diretamente em vez de disparar um evento.
+    await bootstrap();
+
+    // Aguarda a execução da lógica assíncrona (fetch e o catch)
     await flushPromises();
 
     // Verifica se a função de redirecionamento foi chamada com o caminho correto
@@ -80,21 +68,23 @@ describe('scripts/empresa.js', () => {
   });
 
   it('deve chamar /sair e redirecionar ao clicar no botão de logout', async () => {
-    // Simula a resposta de que o usuário está logado
+    // 1. Simula a resposta de que o usuário está logado para o bootstrap passar
     fetchMock.mockResponseOnce(JSON.stringify({ isAuthenticated: true }));
-    // Simula a resposta vazia da chamada de logout
-    fetchMock.mockResponseOnce('');
+    // 2. Simula a resposta da chamada de logout que ocorrerá após o clique
+    fetchMock.mockResponseOnce(JSON.stringify({ success: true }));
 
-    document.dispatchEvent(new window.Event('DOMContentLoaded'));
-    await flushPromises(); // Espera o fetch de status inicial
+    // Executa a inicialização do script (que adiciona o listener de clique)
+    await bootstrap();
+    await flushPromises(); // Garante que a verificação de auth terminou
 
     // Simula o clique do usuário no botão de logout
     document.getElementById('btn-logout').click();
     await flushPromises(); // Espera o fetch de logout
 
-  expect(fetchMock.mock.calls.length).toBeGreaterThanOrEqual(2);
-  expect(fetchMock.mock.calls.some(([u]) => u === '/sair')).toBe(true);
-    
+    // Verifica se a chamada fetch para /sair foi feita
+    const sairCall = fetchMock.mock.calls.find(call => call[0].includes('/sair'));
+    expect(sairCall).toBeDefined();
+
     // Verifica se o redirecionamento foi chamado com o caminho correto
     expect(window.location.assign).toHaveBeenCalledWith('/');
   });

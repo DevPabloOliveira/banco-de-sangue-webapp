@@ -128,12 +128,14 @@ app.post('/entrar', async (req, res) => {
     }
 });
 
+// A rota /sair deve estar assim:
 app.get('/sair', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).send('Erro ao encerrar sessão!');
+      return res.status(500).json({ success: false, message: 'Erro ao encerrar sessão!' });
     }
-    res.redirect('/');
+    // A resposta deve ser um JSON de sucesso
+    res.status(200).json({ success: true, message: 'Sessão encerrada com sucesso.' });
   });
 });
 
@@ -225,26 +227,28 @@ app.post('/editar-empresa', isAuth, async (req, res) => {
 });
 
 
+// app.js (linha ~231)
 app.get('/buscar-funcionario', isAuth, async (req, res) => {
-    try {
-        const { query } = req.query;
-        if (!query) {
-            return res.status(400).json({ success: false, message: 'Nenhum termo de busca fornecido.' });
-        }
-        
-        const searchQuery = 'SELECT * FROM funcionarios WHERE name LIKE ?';
-        const [results] = await connection.query(searchQuery, [`%${query}%`]);
-
-        if (results.length === 0) {
-            return res.status(404).json({ success: false, message: 'Nenhum funcionário encontrado.' });
-        }
-        
-        res.status(200).json({ success: true, funcionarios: results });
-    } catch (error) {
-        console.error('Erro ao buscar funcionário:', error);
-        return res.status(500).json({ success: false, message: 'Erro ao buscar funcionário.' });
+  try {
+    const termo = (req.query.query || '').trim();
+    if (!termo) {
+      return res.status(400).json({ success: false, message: 'Nenhum termo de busca.' });
     }
+
+    const [rows] = await connection.query(
+      'SELECT id, name, cargo, telefone, email FROM funcionarios WHERE name LIKE ? OR cargo LIKE ?',
+      [`%${termo}%`, `%${termo}%`]
+    );
+
+    // 🔔 NÃO devolva 404! Sempre 200
+    return res.json({ success: true, funcionarios: rows });
+  } catch (err) {
+    console.error('Erro ao buscar funcionário:', err);
+    return res.status(500).json({ success: false, message: 'Erro interno.' });
+  }
 });
+
+
 
 app.post('/add-fun', isAuth, async (req, res) => {
     try {
@@ -323,25 +327,66 @@ app.post('/add-bolsa-sangue', isAuth, async (req, res) => {
 
 
 app.get('/buscar-bolsa-sangue', isAuth, async (req, res) => {
-    try {
-        const { tipo_sangue } = req.query;
-        if (!tipo_sangue) {
-            return res.status(400).json({ success: false, message: 'Tipo sanguíneo não fornecido.' });
-        }
-        
-        const query = 'SELECT name, tipo_sangue, telefone, email FROM doadores WHERE tipo_sangue = ?';
-        const [results] = await connection.query(query, [tipo_sangue]);
+  try {
+    // Aceita ?tipo_sangue=AB- (padrão) ou ?tipo=AB-
+    const tipo = ((req.query.tipo_sangue ?? req.query.tipo) || '')
+                   .toUpperCase()
+                   .trim();
 
-        if (results.length === 0) {
-            return res.status(404).json({ success: false, message: 'Nenhum doador encontrado.' });
-        }
-        
-        res.json({ success: true, doadores: results });
-    } catch (error) {
-        console.error('Erro ao buscar bolsa de sangue:', error);
-        return res.status(500).json({ success: false, message: 'Erro ao buscar bolsa de sangue.' });
+    if (!tipo) {
+      return res.status(400).json({
+        success: false,
+        message: 'Parâmetro "tipo_sangue" ausente.',
+      });
     }
+
+    // Ajuste o nome da tabela/colunas conforme seu esquema
+    const [rows] = await connection.query(
+      `SELECT id,
+              tipo_sangue,
+              volume_ml,
+              DATE_FORMAT(validade, '%Y-%m-%d') AS validade
+         FROM bolsas
+        WHERE tipo_sangue = ?`,
+      [tipo]
+    );
+
+    // ✅ Sempre 200, mesmo se rows.length === 0
+    return res.json({
+      success: true,
+      bolsas: rows,          // lista vazia se não encontrou
+    });
+  } catch (err) {
+    console.error('Erro ao buscar bolsas:', err);
+    return res.status(500).json({
+      success: false,
+      message: 'Erro interno ao buscar bolsas de sangue.',
+    });
+  }
 });
+
+// app.js  —  depois do app.get('/buscar-bolsa-sangue', …)
+app.post('/add-bolsa', isAuth, async (req, res) => {
+  try {
+    const { tipo_sangue, volume_ml, data_coleta, validade } = req.body;
+
+    if (!tipo_sangue || !volume_ml || !data_coleta || !validade) {
+      return res.status(400).json({ success: false, message: 'Campos obrigatórios ausentes.' });
+    }
+
+    await connection.query(
+      `INSERT INTO bolsas (tipo_sangue, volume_ml, data_coleta, validade)
+       VALUES (?,?,?,?)`,
+      [tipo_sangue.toUpperCase(), volume_ml, data_coleta, validade]
+    );
+
+    return res.json({ success: true, message: 'Bolsa registrada com sucesso.' });
+  } catch (err) {
+    console.error('Erro ao adicionar bolsa:', err);
+    return res.status(500).json({ success: false, message: 'Erro interno.' });
+  }
+});
+
 
 app.post('/add-insumo', isAuth, async (req, res) => {
     try {

@@ -18,6 +18,18 @@ export function createPool (opts = {}) {
   });
 }
 
+let pool;
+export const getPool = () => {
+  if (!pool) {
+    pool = mysql.createPool({
+      uri: process.env.DB_URI,
+      waitForConnections: true,
+      connectionLimit: 10,
+    });
+  }
+  return pool;
+};
+
 export const connection = createPool();   // agora createPool existe
 
 //Adicionar Usuário

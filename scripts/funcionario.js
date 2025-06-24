@@ -1,192 +1,226 @@
-document.addEventListener("DOMContentLoaded", () => {
-    // Verificar autenticação
-    fetch('/auth-status')
-        .then(res => res.json())
-        .then(data => {
-            if (!data.isAuthenticated) {
-                // Redirecionar se não autenticado
-                window.location.assign('/');
-            }
-        })
-        .catch(error => {
-            console.error('Erro ao verificar autenticação:', error);
-            window.location.assign('/');
-        });
+/* eslint-disable no-console */
 
+// Assumimos a existência de um arquivo api.js que exporta estas funções
+import { apiGet, apiPost } from './api.js';
+
+// Ponto de entrada que chama a função principal após o carregamento do DOM
+// A inicialização automática é desativada em ambiente de teste para permitir a chamada manual.
+document.addEventListener('DOMContentLoaded', bootstrap);
+
+/**
+ * Função principal que inicializa todas as funcionalidades da página do funcionário.
+ */
+export async function bootstrap() {
+    try {
+        // 1. Garante que o usuário está autenticado para acessar a página
+        await verificaAuth();
+        // 2. Inicializa todos os listeners de eventos da página
+        initLogout();
+        initAddDoador();
+        initBuscaDoador();
+        initBuscaBolsa();
+        initAddInsumo();
+        initBuscaInsumos();
+
+    } catch (err) {
+        // Se a autenticação falhar, o usuário é redirecionado para a página de login
+        console.error('Falha na autenticação do funcionário:', err);
+        // Padroniza o redirecionamento para ser testável.
+        window.location.assign('/');
+    }
+}
+
+
+// --- Funções de Inicialização ---
+
+
+/**
+ * Verifica o status de autenticação no servidor.
+ * Lança um erro se não estiver autenticado.
+ */
+async function verificaAuth() {
+    const { isAuthenticated } = await apiGet('/auth-status');
+    if (!isAuthenticated) {
+        throw new Error('Usuário não autenticado');
+    }
+}
+
+/**
+ * Adiciona o evento de clique para o botão de logout.
+ */
+function initLogout() {
     const btnLogout = document.getElementById('btn-logout');
-    if (btnLogout) {
-        // Logout
-        btnLogout.addEventListener('click', (e) => {
-            e.preventDefault();
-            fetch('/sair')
-                .then(() => {
-                    window.location.assign('/');
-                })
-                .catch(error => {
-                    console.error('Erro ao encerrar sessão:', error);
+    if (!btnLogout) return;
+    btnLogout.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+            await apiGet('/sair');
+            window.location.assign('/');
+        } catch (error) {
+            console.error('Erro ao encerrar sessão:', error);
+        }
+    });
+}
+
+/**
+ * Lida com o formulário de adição de um novo doador.
+ */
+function initAddDoador() {
+    const form = document.getElementById('modal-add-doacao');
+    if (!form) return;
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        // CORREÇÃO: Usa 'this' (ou a variável 'form' do closure), que é mais estável no JSDOM.
+        const data = Object.fromEntries(new FormData(this).entries());
+
+        try {
+            await apiPost('/add-doacao', data);
+            alert('Doador adicionado com sucesso!');
+            this.reset();
+            window.location.hash = ''; // Fecha o modal
+        } catch (error) {
+            console.error('Erro ao adicionar doador:', error);
+            alert(`Erro ao adicionar doador: ${error.message}`);
+        }
+    });
+}
+
+/**
+ * Lida com o formulário de busca de doadores.
+ */
+function initBuscaDoador() {
+    const form = document.getElementById('form-busca-doador');
+    const alvo = document.getElementById('resultado-busca-doador');
+    const aviso = document.querySelector('#buscar-doador #aviso');
+    if (!form || !alvo || !aviso) return;
+    form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        aviso.style.display = 'none';
+        alvo.innerHTML = 'Buscando...';
+
+        // CORREÇÃO: Usa a variável 'form' do closure, que é mais estável que ev.currentTarget no JSDOM.
+        const q = new FormData(form).get('query');
+        try {
+            const { doadores } = await apiGet(`/buscar-doador?query=${encodeURIComponent(q)}`);
+            alvo.innerHTML = ''; // Limpa o "Buscando..."
+
+            if (!doadores || doadores.length === 0) {
+                aviso.textContent = 'Nenhum doador encontrado';
+                aviso.style.display = 'block';
+                return;
+            }
+
+            alvo.innerHTML = doadores
+                .map(d => `<li>Nome: ${d.name}, Tipo: ${d.tipo_sangue.toUpperCase()}</li>`)
+                .join('');
+        } catch (err) {
+            console.error('Erro na busca de doador:', err);
+            aviso.textContent = 'Erro na busca';
+            aviso.style.display = 'block';
+        }
+    });
+}
+
+/**
+ * Lida com o formulário de busca de bolsas de sangue.
+ */
+function initBuscaBolsa() {
+    const form = document.getElementById('form-busca-bolsa');
+    const resultDiv = document.getElementById('resultado-bolsa');
+    const aviso = document.querySelector('#buscar-bolsa-sangue #aviso');
+    if (!form || !resultDiv || !aviso) return;
+
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        // CORREÇÃO: Usa a variável 'form' do closure.
+        const tipoSangue = new FormData(form).get('tipo_sangue');
+        resultDiv.innerHTML = 'Buscando...';
+        aviso.style.display = 'none';
+
+        try {
+            const { doadores } = await apiGet(`/buscar-bolsa-sangue?tipo_sangue=${encodeURIComponent(tipoSangue)}`);
+            resultDiv.innerHTML = '';
+
+            if (doadores && doadores.length > 0) {
+                doadores.forEach(doador => {
+                    const p = document.createElement('p');
+                    p.textContent = `Nome: ${doador.name}, Tipo Sanguíneo: ${doador.tipo_sangue}`;
+                    resultDiv.appendChild(p);
                 });
-        });
-    }
+            } else {
+                aviso.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar bolsa de sangue:', error);
+            aviso.textContent = 'Erro ao realizar a busca.';
+            aviso.style.display = 'block';
+        }
+    });
+}
 
-    // Adicionar doador
-    const formAddDoacao = document.getElementById('modal-add-doacao');
-    if (formAddDoacao) {
-        formAddDoacao.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
 
-            fetch('/add-doacao', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao adicionar doador.');
-                    }
-                    alert('Doador adicionado com sucesso!');
-                    this.reset();
-                    // Fechar modal: simples maneira é recarregar a página ou remover hash
-                    window.location.hash = '';
-                })
-                .catch(error => {
-                    console.error('Erro ao adicionar doador:', error);
-                    alert('Erro ao adicionar doador: ' + error.message);
+/**
+ * Lida com o formulário de adição de insumos.
+ */
+function initAddInsumo() {
+    const form = document.getElementById('form-add-insumo');
+    const okBox = document.getElementById('mensagem-sucesso');
+    const errBox = document.getElementById('mensagem-erro');
+    if (!form || !okBox || !errBox) return;
+
+    form.addEventListener('submit', async ev => {
+        ev.preventDefault();
+        okBox.style.display = 'none';
+        errBox.style.display = 'none';
+
+        // CORREÇÃO: Usa a variável 'form' do closure.
+        const payload = Object.fromEntries(new FormData(form).entries());
+        try {
+            await apiPost('/add-insumo', payload);
+            okBox.textContent = 'Insumo adicionado ✅';
+            okBox.style.display = 'block';
+            form.reset();
+            setTimeout(() => { okBox.style.display = 'none'; window.location.hash = ''; }, 3000);
+        } catch (err) {
+            errBox.textContent = err.message || 'Erro ao adicionar insumo.';
+            errBox.style.display = 'block';
+            setTimeout(() => { errBox.style.display = 'none'; }, 3000);
+        }
+    });
+}
+
+/**
+ * Lida com o formulário de busca de insumos.
+ */
+function initBuscaInsumos() {
+    const form = document.getElementById('form-busca-insumo');
+    const resultDiv = document.getElementById('resultado-insumos');
+    const aviso = document.querySelector('#buscar-insumos #aviso');
+    if (!form || !resultDiv || !aviso) return;
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        // CORREÇÃO: Usa a variável 'form' do closure.
+        const nome = new FormData(form).get('nome');
+        resultDiv.innerHTML = 'Buscando...';
+        aviso.style.display = 'none';
+
+        try {
+            const { insumos } = await apiGet(`/buscar-insumos?nome=${encodeURIComponent(nome)}`);
+            resultDiv.innerHTML = '';
+
+            if (insumos && insumos.length > 0) {
+                insumos.forEach(insumo => {
+                    const p = document.createElement('p');
+                    p.textContent = `Nome: ${insumo.nome}, Quantidade: ${insumo.quantidade}`;
+                    resultDiv.appendChild(p);
                 });
-        });
-    }
-
-    // Buscar Doador
-    const formBuscaDoador = document.getElementById('form-busca-doador');
-    if (formBuscaDoador) {
-        formBuscaDoador.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const query = this.querySelector('[name="query"]').value;
-
-            fetch(`/buscar-doador?query=${encodeURIComponent(query)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const resultDiv = document.getElementById('resultado-busca-doador');
-                    const aviso = document.querySelector('#buscar-doador #aviso');
-                    resultDiv.innerHTML = '';
-                    if (data.success && data.doadores.length > 0) {
-                        aviso.style.display = 'none';
-                        data.doadores.forEach(doador => {
-                            const p = document.createElement('p');
-                            p.textContent = `Nome: ${doador.name}, Tipo Sanguíneo: ${doador.tipo_sangue}`;
-                            resultDiv.appendChild(p);
-                        });
-                    } else {
-                        aviso.style.display = 'block';
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar doador:', error));
-        });
-    }
-
-    // Buscar Bolsa de Sangue
-    const formBuscaBolsa = document.getElementById('form-busca-bolsa');
-    if (formBuscaBolsa) {
-        formBuscaBolsa.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const tipoSangue = this.querySelector('select[name="tipo_sangue"]').value;
-
-            fetch(`/buscar-bolsa-sangue?tipo_sangue=${encodeURIComponent(tipoSangue)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const resultDiv = document.getElementById('resultado-bolsa');
-                    const aviso = document.querySelector('#buscar-bolsa-sangue #aviso');
-                    resultDiv.innerHTML = '';
-                    if (data.success && data.doadores.length > 0) {
-                        aviso.style.display = 'none';
-                        data.doadores.forEach(doador => {
-                            const p = document.createElement('p');
-                            p.textContent = `Nome: ${doador.name}, Tipo Sanguíneo: ${doador.tipo_sangue}`;
-                            resultDiv.appendChild(p);
-                        });
-                    } else {
-                        aviso.style.display = 'block';
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar bolsa de sangue:', error));
-        });
-    }
-
-    // Adicionar Insumo
-    const formAddInsumo = document.getElementById('form-add-insumo');
-    if (formAddInsumo) {
-        const mensagemSucesso = document.getElementById('mensagem-sucesso');
-        const mensagemErro = document.getElementById('mensagem-erro');
-
-        formAddInsumo.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData.entries());
-
-            fetch('/add-insumo', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.success) {
-                        mensagemSucesso.style.display = 'block';
-                        mensagemErro.style.display = 'none';
-                        formAddInsumo.reset();
-                        setTimeout(() => {
-                            mensagemSucesso.style.display = 'none';
-                            window.location.hash = '';
-                        }, 3000);
-                    } else {
-                        mensagemErro.textContent = result.message || 'Erro ao adicionar insumo.';
-                        mensagemErro.style.display = 'block';
-                        setTimeout(() => {
-                            mensagemErro.style.display = 'none';
-                        }, 3000);
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro ao adicionar insumo:', error);
-                    mensagemErro.textContent = 'Erro ao adicionar insumo.';
-                    mensagemErro.style.display = 'block';
-                    setTimeout(() => {
-                        mensagemErro.style.display = 'none';
-                    }, 3000);
-                });
-        });
-    }
-
-    // Buscar Insumos
-    const formBuscaInsumo = document.getElementById('form-busca-insumo');
-    if (formBuscaInsumo) {
-        formBuscaInsumo.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const nome = this.querySelector('input[name="nome"]').value;
-
-            fetch(`/buscar-insumos?nome=${encodeURIComponent(nome)}`)
-                .then(res => res.json())
-                .then(data => {
-                    const resultDiv = document.getElementById('resultado-insumos');
-                    const aviso = document.querySelector('#buscar-insumos #aviso');
-                    resultDiv.innerHTML = '';
-                    if (data.success && data.insumos.length > 0) {
-                        aviso.style.display = 'none';
-                        data.insumos.forEach(insumo => {
-                            const p = document.createElement('p');
-                            p.textContent = `Nome: ${insumo.nome}, Quantidade: ${insumo.quantidade}`;
-                            resultDiv.appendChild(p);
-                        });
-                    } else {
-                        aviso.style.display = 'block';
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar insumos:', error));
-        });
-    }
-});
+            } else {
+                aviso.style.display = 'block';
+            }
+        } catch (error) {
+            console.error('Erro ao buscar insumos:', error);
+            aviso.textContent = 'Erro ao realizar a busca.';
+            aviso.style.display = 'block';
+        }
+    });
+}

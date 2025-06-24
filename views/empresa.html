@@ -1,96 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Sangue - Minha empresa</title>
-    <link rel="icon" href="/img/icon.png">
-    <link rel="stylesheet" href="/styles/empresa.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Banco de Sangue – Minha empresa</title>
+
+    <!-- Ícone e estilos -->
+    <link rel="icon" href="/img/icon.png" />
+    <link rel="stylesheet" href="/styles/empresa.css" />
 </head>
 <body>
+    <!-- ▸ Barra de navegação ------------------------------------------------ -->
     <nav>
         <a href="/views/index.html" class="logo">
-            <img src="/img/icon.png" alt="Logo" style="width: 70px; height: auto;">
+            <img src="/img/icon.png" alt="Logo" style="width:70px;height:auto" />
         </a>
         <div class="divider"></div>
-        <!-- Criar um botão de logout com id para o script funcionar -->
-        <a href="#" id="btn-logout" class="logout">
-            <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width: 40px; height: auto;">
-            <br>
+
+        <!-- Botão logout (capturado pelo empresa.js) -->
+        <a href="/sair" id="btn-logout" class="logout">
+            <img src="/img/icons/turnoff.png" alt="Encerrar Sessão" style="width:40px;height:auto" />
+            <br />
             <label class="legenda">Deslogar</label>
         </a>
     </nav>
 
+    <!-- ▸ Modais genéricos --------------------------------------------------- -->
+    <!-- Deletar empresa -->
     <div id="modal-deletar" class="modal">
-        <img src="/img/icons/lixeira.png">
+        <img src="/img/icons/lixeira.png" />
         <a href="#" class="fechar">&times;</a>
         <form action="/deletar" method="POST">
             <h4>Deletar empresa?</h4>
-            <input type="password" name="password" placeholder="Confirme com sua senha*" required>
+            <input type="password" name="password" placeholder="Confirme com sua senha*" required />
             <a href="/recuperacao" class="esqueceu-senha" target="_blank">Esqueceu sua senha?</a>
-            <p id="aviso" style="color: red">Ao deletar sua empresa, sua conta será encerrada**</p>
+            <p id="aviso" style="color:red">Ao deletar sua empresa, sua conta será encerrada**</p>
             <button type="submit">Deletar empresa</button>
         </form>
     </div>
 
+    <!-- Editar empresa -->
     <div id="editar-empresa" class="modal">
         <h4>Editar empresa</h4>
         <a href="#" class="fechar">&times;</a>
-        <!-- Necessário criar o form para editar empresa, como no código antigo -->
         <form action="/editar-empresa" method="POST">
-            <input type="text" name="nameEmpresa" placeholder="Novo nome da empresa" required>
-            <input type="text" name="endereco" placeholder="Novo endereço da empresa" required>
+            <input type="text" name="nameEmpresa" placeholder="Novo nome da empresa" required />
+            <input type="text" name="endereco" placeholder="Novo endereço da empresa" required />
             <button type="submit">Salvar alterações</button>
         </form>
     </div>
 
+    <!-- ▸ Funcionários -------------------------------------------------------- -->
+    <!-- Adicionar funcionário -->
     <div id="add-funcionario" class="modal">
         <a href="#" class="fechar">&times;</a>
         <form id="modal-add-funcionario" action="/add-fun" method="POST">
             <h4>Adicionar um funcionário</h4>
-            <input type="text" name="name" placeholder="Nome do funcionário*" required>
-            <select name="cargo" id="cargo" required>
+            <input type="text" name="name" placeholder="Nome do funcionário*" required />
+            <select name="cargo" required>
                 <option value="">Cargo do funcionário*</option>
                 <option value="limpeza">Limpeza</option>
                 <option value="balconista">Balconista</option>
                 <option value="estoque">Estoque</option>
                 <option value="outro">Outro</option>
             </select>
-            <input type="text" name="cpf" placeholder="CPF do funcionário*" required>
-            <input type="text" name="pis" placeholder="PIS do funcionário">
-            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
-            <input type="email" name="email" placeholder="E-mail do funcionário" required>
-            <input type="password" name="password" placeholder="Senha do funcionário*" required>
-            <input type="text" name="complemento" placeholder="Complemento">
+            <input type="text" name="cpf" placeholder="CPF do funcionário*" required />
+            <input type="text" name="pis" placeholder="PIS do funcionário" />
+            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx" />
+            <input type="email" name="email" placeholder="E-mail do funcionário" required />
+            <input type="password" name="password" placeholder="Senha do funcionário*" required />
+            <input type="text" name="complemento" placeholder="Complemento" />
             <button type="submit">Cadastrar funcionário</button>
         </form>
     </div>
 
+    <!-- Buscar funcionário -->
     <div id="buscar-funcionario" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de funcionários</h4>
-        <!-- Criar o form para buscar funcionario -->
         <form id="form-busca-funcionario" action="/buscar-funcionario" method="GET">
-            <input type="text" name="query" placeholder="Nome ou cargo do funcionário" required>
+            <input type="text" name="query" placeholder="Nome ou cargo do funcionário" required />
             <button type="submit">Buscar</button>
         </form>
         <div id="resultado-busca-funcionario"></div>
     </div>
 
+    <!-- ▸ Doações ------------------------------------------------------------- -->
+    <!-- Registrar doação (doador) -->
     <div id="add-doacao" class="modal">
         <a href="#" class="fechar">&times;</a>
         <form id="modal-add-doacao" action="/add-doacao" method="POST">
             <h4>Registrar uma doação</h4>
-            <input type="text" name="name" placeholder="Nome do doador*" required>
-            <select name="documento" id="documento" required>
-                <option>Documento c/ foto apresentado*</option>
+            <input type="text" name="name" placeholder="Nome do doador*" required />
+            <select name="documento" required>
+                <option value="">Documento c/ foto apresentado*</option>
                 <option value="rg">RG</option>
                 <option value="cnh">CNH</option>
                 <option value="carteira-trabalho">Carteira de trabalho</option>
                 <option value="carteira-conselho-prof">Carteira do Conselho Profissional</option>
             </select>
-            <select name="tipo_sangue" id="tipo-sangue" required>
-                <option>Tipo sanguíneo*</option>
+            <select name="tipo_sangue" required>
+                <option value="">Tipo sanguíneo*</option>
                 <option value="a+">A+</option>
                 <option value="b+">B+</option>
                 <option value="ab+">AB+</option>
@@ -100,22 +110,22 @@
                 <option value="ab-">AB-</option>
                 <option value="o-">O-</option>
             </select>
-            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx">
-            <input type="email" name="email" placeholder="E-mail de doador">
-            <input type="text" name="complemento" placeholder="Complemento">
+            <input type="tel" name="telefone" placeholder="(xx)xxxxx-xxxx" />
+            <input type="email" name="email" placeholder="E-mail do doador" />
+            <input type="text" name="complemento" placeholder="Complemento" />
 
             <div class="checkbox-group">
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao1" name="condicao_1" required>
+                    <input type="checkbox" id="condicao1" name="condicao_1" required />
                     <label for="condicao1">O doador tem entre 16 e 69 anos</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao2" name="condicao_2" required>
-                    <label for="condicao2">O doador tem mais de 50kg</label>
+                    <input type="checkbox" id="condicao2" name="condicao_2" required />
+                    <label for="condicao2">O doador tem mais de 50&nbsp;kg</label>
                 </div>
                 <div class="checkbox-item">
-                    <input type="checkbox" id="condicao3" name="condicao_3" required>
-                    <label for="condicao3">Não tomou vacina contra gripe há 48 horas</label>
+                    <input type="checkbox" id="condicao3" name="condicao_3" required />
+                    <label for="condicao3">Não tomou vacina contra gripe há 48&nbsp;h</label>
                 </div>
             </div>
 
@@ -123,16 +133,48 @@
         </form>
     </div>
 
+    <!-- Buscar doador -->
     <div id="buscar-doador" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de doador/doação</h4>
         <form id="form-busca-doador" action="/buscar-doador" method="GET">
-            <input type="text" name="query" placeholder="Nome ou tipo sanguíneo" required>
+            <input type="text" name="query" placeholder="Nome ou tipo sanguíneo" required />
             <button type="submit">Buscar</button>
         </form>
         <div id="resultado-busca-doador"></div>
     </div>
 
+    <!-- ▸ Bolsa de sangue (NOVO) --------------------------------------------- -->
+    <div id="add-bolsa-sangue" class="modal">
+        <a href="#" class="fechar">&times;</a>
+        <form id="form-add-bolsa" action="/add-bolsa" method="POST">
+            <h4>Registrar Bolsa de Sangue</h4>
+
+            <select name="tipo_sangue" required>
+                <option value="">Tipo sanguíneo*</option>
+                <option value="a+">A+</option>
+                <option value="b+">B+</option>
+                <option value="ab+">AB+</option>
+                <option value="o+">O+</option>
+                <option value="a-">A-</option>
+                <option value="b-">B-</option>
+                <option value="ab-">AB-</option>
+                <option value="o-">O-</option>
+            </select>
+
+            <input type="number" name="volume_ml" placeholder="Volume (mL)*" required />
+            <input type="date"   name="data_coleta" placeholder="Data da coleta*" required />
+            <input type="date"   name="validade" placeholder="Data de validade*" required />
+
+            <button type="submit">Cadastrar Bolsa</button>
+
+            <!-- Mensagens de feedback (capturadas pelo JS) -->
+            <p id="msg-ok"   style="display:none;color:green;margin-top:10px;">Bolsa cadastrada com sucesso!</p>
+            <p id="msg-erro" style="display:none;color:red;margin-top:10px;">Erro ao cadastrar bolsa.</p>
+        </form>
+    </div>
+
+    <!-- Buscar bolsa de sangue -->
     <div id="buscar-bolsa-sangue" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de bolsa de sangue</h4>
@@ -153,107 +195,106 @@
         <div id="resultado-bolsa"></div>
     </div>
 
+    <!-- ▸ Insumos ------------------------------------------------------------- -->
+    <!-- Adicionar insumos -->
     <div id="add-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Adicionar insumo</h4>
         <form id="form-add-insumo">
-            <input type="text" name="nome" placeholder="Insumo* ex: seringas" required>
-            <input type="number" name="quantidade" placeholder="Quantidade* ex: 20" required>
+            <input type="text" name="nome" placeholder="Insumo* ex: seringas" required />
+            <input type="number" name="quantidade" placeholder="Quantidade* ex: 20" required />
             <button type="submit">Adicionar Insumo</button>
         </form>
-        <div id="mensagem-sucesso" style="display: none; color: green; margin-top: 10px;">
-            Insumo adicionado com sucesso!
-        </div>
-        <div id="mensagem-erro" style="display: none; color: red; margin-top: 10px;">
-            Ocorreu um erro ao adicionar o insumo.
-        </div>
+        <div id="mensagem-sucesso" style="display:none;color:green;margin-top:10px;">Insumo adicionado com sucesso!</div>
+        <div id="mensagem-erro" style="display:none;color:red;margin-top:10px;">Ocorreu um erro ao adicionar o insumo.</div>
     </div>
 
+    <!-- Buscar insumos -->
     <div id="buscar-insumos" class="modal">
         <a href="#" class="fechar">&times;</a>
         <h4>Busca de insumos</h4>
         <form id="form-busca-insumo" action="/buscar-insumos" method="GET">
-            <input type="text" name="nome" placeholder="Nome do insumo" required>
+            <input type="text" name="nome" placeholder="Nome do insumo" required />
             <button type="submit">Buscar</button>
         </form>
         <div id="resultado-insumos"></div>
     </div>
 
+    <!-- ▸ Conteúdo principal -------------------------------------------------- -->
     <main>
+        <!-- Empresa -->
         <section id="empresa">
-            <h2>
-                <img src="../img/icons/empresa.png"/>
-                Empresa
-            </h2>
+            <h2><img src="../img/icons/empresa.png" />Empresa</h2>
             <div class="botao-container">
                 <a href="#modal-deletar" class="botao">
-                    <img src="../img/icons/lixeira.png"/>
+                    <img src="../img/icons/lixeira.png" />
                     <span>Excluir Empresa</span>
                 </a>
                 <a href="#editar-empresa" class="botao">
-                    <img src="../img/icons/editar.png"/>
+                    <img src="../img/icons/editar.png" />
                     <span>Editar Empresa</span>
                 </a>
             </div>
         </section>
 
+        <!-- Funcionários -->
         <section id="funcionario">
-            <h2>
-                <img src="../img/icons/funcionario.png"/>
-                Funcionários
-            </h2>
+            <h2><img src="../img/icons/funcionario.png" />Funcionários</h2>
             <div class="botao-container">
                 <a href="#add-funcionario" class="botao">
-                    <img src="../img/icons/adicionar-funcionario.png"/>
+                    <img src="../img/icons/adicionar-funcionario.png" />
                     <span>Adicionar Funcionário</span>
                 </a>
                 <a href="#buscar-funcionario" class="botao">
-                    <img src="../img/icons/buscar-funcionario.png"/>
+                    <img src="../img/icons/buscar-funcionario.png" />
                     <span>Buscar Funcionários</span>
                 </a>
             </div>
         </section>
 
+        <!-- Doações -->
         <section id="doador">
-            <h2>
-                <img src="../img/icons/doador.png"/>
-                Doações
-            </h2>
+            <h2><img src="../img/icons/doador.png" />Doações</h2>
             <div class="botao-container">
                 <a href="#add-doacao" class="botao">
-                    <img src="../img/icons/observacao.png"/>
+                    <img src="../img/icons/observacao.png" />
                     <span>Registrar Doador</span>
                 </a>
                 <a href="#buscar-doador" class="botao">
-                    <img src="../img/icons/procurar.png"/>
+                    <img src="../img/icons/procurar.png" />
                     <span>Buscar Doador</span>
                 </a>
             </div>
         </section>
 
+        <!-- Estoque -->
         <section id="estoque">
-            <h2>
-                <img src="../img/icons/estoque.png"/>
-                Estoque
-            </h2>
+            <h2><img src="../img/icons/estoque.png" />Estoque</h2>
             <div class="botao-container">
+                <!-- NOVO: Registrar bolsa diretamente -->
+                <a href="#add-bolsa-sangue" class="botao">
+                    <img src="../img/icons/adicionar.png" />
+                    <span>Registrar Bolsa</span>
+                </a>
+
                 <a href="#buscar-bolsa-sangue" class="botao">
-                    <img src="../img/icons/procurar.png"/>
+                    <img src="../img/icons/procurar.png" />
                     <span>Buscar Bolsa de Sangue</span>
                 </a>
+
                 <a href="#add-insumos" class="botao">
-                    <img src="../img/icons/adicionar.png"/>
+                    <img src="../img/icons/adicionar.png" />
                     <span>Adicionar Insumo</span>
                 </a>
                 <a href="#buscar-insumos" class="botao">
-                    <img src="../img/icons/procurar.png"/>
+                    <img src="../img/icons/procurar.png" />
                     <span>Buscar Insumos</span>
                 </a>
             </div>
         </section>
     </main>
 
-    <!-- Scripts -->
-    <script src="/scripts/empresa.js"></script>
+    <!-- ▸ Scripts ------------------------------------------------------------- -->
+    <script type="module" src="/scripts/empresa.js"></script>
 </body>
 </html>
